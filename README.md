@@ -3,13 +3,20 @@
 
 ## 简介
 科学膜蛤，学习一个，提高姿势水平；
+
 谈笑风生，一派胡言，祝你身体健康。
+
+**下载：[Google Play](https://play.google.com/store/apps/details?id=com.nacosiren.blog.mogiciansmanual)**
 
 ## 功能
 【说】：语录、采访、访问对话、诗词等作品。
+
 【学】：考据、同人、段子、知乎精选等知识。
+
 【逗】：高清、原生、颜艺、鬼畜、成语、恶搞、暴走漫画等表情，支持动图。
+
 【唱】：古典、流行、动画等音乐。
+
 
 ## 截屏
 ![说](https://wtieiw.bn1302.livefilestore.com/y4mTt0JYvxc47iMwH98AvBWS9uxm9IVhU82sl35ZttuABsUDohjCQWWYbOyL5HsCclZ7mwYJ878i_f-scSGdXw6csZnW1OIcEE_qSwu2xg8zGk7DhDGEY0WgnB9VTX33fh5NLtSQegYTaGvGBtrwfIeSfAVy7mqR6Iyx9ioxa0LjRTqQNPdNk-_jbwr_7afMYa6FytjvYqboRhR5O11C_5mtA?width=569&height=1024&cropmode=none)
