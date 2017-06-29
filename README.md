@@ -1,4 +1,5 @@
 # 膜法指南
+![真正的粉丝](https://nqbmda.bn1302.livefilestore.com/y4mHwB48a1u_VDa1JazAwraT-n68d51iXi9hVijb_OAArka7uOZd4KlxVdHKPxHZ3TNH97885qtMVfQ9HVhBZMf689435aWNd729BUadZz-BPJF9AA9hAKSt-0Q7vTbgh-TEFmVyVPF92_9QjCor5nbeIScH7wtE92HZX_FM54bJLdKbkQKVZwj62rU9mlk5Jt85co7iOq9SrjyDmX92fT_Fw?width=660&height=322&cropmode=none)
 
 ## 简介
 科学膜蛤，学习一个，提高姿势水平；
