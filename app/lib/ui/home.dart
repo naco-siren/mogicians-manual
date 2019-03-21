@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'tab_shuo.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import 'package:mogicians_manual/ui/tabs.dart';
+import 'package:mogicians_manual/data/models.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -14,11 +17,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  final shuoModel = TabModel();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Image.asset('images/ic_guy_fawkes.png'),
+        leading: Icon(Icons.school), // Image.asset('assets/images/ic_guy_fawkes.png'),
         title: Text(widget.title),
       ),
       backgroundColor: Colors.grey.shade200,
@@ -28,10 +33,10 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.mic), title: Text('【说】')),
-          BottomNavigationBarItem(icon: Icon(Icons.local_library), title: Text('【学】')),
-          BottomNavigationBarItem(icon: Icon(Icons.sentiment_very_satisfied), title: Text('【逗】')),
-          BottomNavigationBarItem(icon: Icon(Icons.music_note), title: Text('【唱】')),
+          BottomNavigationBarItem(title: Text('【说】'), icon: Icon(Icons.mic)),
+          BottomNavigationBarItem(title: Text('【学】'), icon: Icon(Icons.local_library)),
+          BottomNavigationBarItem(title: Text('【逗】'), icon: Icon(Icons.sentiment_very_satisfied)),
+          BottomNavigationBarItem(title: Text('【唱】'), icon: Icon(Icons.music_note)),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -42,9 +47,13 @@ class _HomePageState extends State<HomePage> {
   Widget _getTab() {
     switch (_selectedIndex) {
       case 0:
-        return new TabShuo();
+        shuoModel.loadData();
+        return ScopedModel<TabModel>(
+          model: shuoModel,
+          child: TabShuo(),
+        );
       default:
-        return new Text('NULL');
+        return new Text('PLACEHOLDER');
     }
   }
 

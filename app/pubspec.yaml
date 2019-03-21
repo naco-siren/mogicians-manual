@@ -19,6 +19,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  scoped_model: ^1.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -72,4 +73,5 @@ flutter:
   # see https://flutter.io/custom-fonts/#from-packages
 
   assets:
-    - images/
+    - assets/images/
+    - assets/data/

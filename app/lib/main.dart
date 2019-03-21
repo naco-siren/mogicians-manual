@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'ui/home.dart';
+import 'package:mogicians_manual/ui/home.dart';
 
 void main() => runApp(MyApp());
 

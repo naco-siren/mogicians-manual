@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 
-// The base class for the different types of items the List can contain
-abstract class ListItem {}
+import 'package:mogicians_manual/data/list_items.dart';
 
-// A ListItem that contains data to display a heading
-class HeadingItem implements ListItem {
-  final String heading;
-
-  HeadingItem(this.heading);
-}
-
-class HeadingTile extends StatelessWidget {
-  final HeadingItem item;
+class HeaderTile extends StatelessWidget {
+  final HeaderItem item;
   
-  HeadingTile(this.item);
+  HeaderTile(this.item);
   
   @override
   Widget build(BuildContext context) {
@@ -28,14 +20,6 @@ class HeadingTile extends StatelessWidget {
         )
     );
   }
-}
-
-// A ListItem that contains data to display a message
-class TextItem implements ListItem {
-  final String title;
-  final String body;
-
-  TextItem(this.title, this.body);
 }
 
 class TextTile extends StatefulWidget {
@@ -114,6 +98,7 @@ class TextTileState extends State<TextTile> {
   }
 }
 
-class TailingItem implements ListItem {
-
+class FooterTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => SizedBox(height: 64);
 }
