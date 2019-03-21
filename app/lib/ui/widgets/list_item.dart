@@ -68,24 +68,52 @@ class TextTileState extends State<TextTile> {
           },
           child: new Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget> [
-              Container(
-                  padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                  child: Text(
-                    item.title,
-                    style: Theme.of(context).textTheme.body1.apply(
-                        fontSizeFactor: 1.2
-                    ),
-                  ),
-              ),
-              Container(
-                color: Colors.grey.shade300,
-                height: 1,
-              ),
-            ]
+            children: generateChildren(),
           )
         ),
         margin: EdgeInsets.all(0),
     );
   }
+
+  List<Widget> generateChildren() {
+
+    List<Widget> contents = [];
+    contents.add(Text(
+      item.title,
+      style: Theme.of(context).textTheme.body1.apply(
+          fontSizeFactor: 1.2
+      ),
+    ));
+    if (_expanded) {
+      contents.add(SizedBox(height: 8));
+      contents.add(
+        Text(
+          item.body,
+          style: Theme.of(context).textTheme.body1.apply(
+              fontSizeFactor: 1.1,
+              color: Colors.grey.shade600,
+          ),
+        ),
+      );
+    }
+    
+    List<Widget> children = [];
+    children.add(Container(
+      padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: contents,
+      ),
+    ));
+    children.add(Container(
+      color: Colors.grey.shade300,
+      height: 1,
+    ));
+
+    return children;
+  }
+}
+
+class TailingItem implements ListItem {
+
 }
