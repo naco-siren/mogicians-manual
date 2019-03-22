@@ -9,7 +9,7 @@ import 'package:mogicians_manual/data/models.dart';
 class TabShuo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<TabModel>(
+    return ScopedModelDescendant<TabShuoModel>(
       builder: (context, child, model) =>
         ListView.builder(
             itemCount: model.items.length,
@@ -24,6 +24,28 @@ class TabShuo extends StatelessWidget {
               }
             }
         ),
+    );
+  }
+}
+
+class TabXue extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<TabXueModel>(
+      builder: (context, child, model) =>
+          ListView.builder(
+              itemCount: model.items.length,
+              itemBuilder: (context, index) {
+                final item = model.items[index];
+                if (item is HeaderItem) {
+                  return HeaderTile(item);
+                } else if (item is TextItem) {
+                  return TextTile(item);
+                } else if (item is FooterItem) {
+                  return FooterTile();
+                }
+              }
+          ),
     );
   }
 }
