@@ -12,6 +12,7 @@ class TabShuo extends StatelessWidget {
     return ScopedModelDescendant<TabShuoModel>(
       builder: (context, child, model) =>
         ListView.builder(
+            key: PageStorageKey<String>("tab_shuo"),
             itemCount: model.items.length,
             itemBuilder: (context, index) {
               final item = model.items[index];
@@ -34,6 +35,7 @@ class TabXue extends StatelessWidget {
     return ScopedModelDescendant<TabXueModel>(
       builder: (context, child, model) =>
           ListView.builder(
+              key: PageStorageKey<String>("tab_xue"),
               itemCount: model.items.length,
               itemBuilder: (context, index) {
                 final item = model.items[index];

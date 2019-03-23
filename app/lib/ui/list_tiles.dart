@@ -39,8 +39,6 @@ class TextTileState extends State<TextTile> {
 
   TextTileState(this.item);
 
-  bool _expanded = false;
-
   @override
   Widget build(BuildContext context) {
     return new Card(
@@ -50,24 +48,24 @@ class TextTileState extends State<TextTile> {
         child: InkWell(
           onTap: () {
             setState(() {
-              _expanded = !_expanded;
+              item.isExpanded = !item.isExpanded;
             });
           },
           onLongPress: () {
-            if (_expanded) {
+            if (item.isExpanded) {
               _copyToClipboard(item.title, item.body);
             }
           },
           child: new Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: generateChildren(),
+            children: _generateChildren(),
           )
         ),
         margin: EdgeInsets.all(0),
     );
   }
 
-  List<Widget> generateChildren() {
+  List<Widget> _generateChildren() {
     List<Widget> contents = [];
     contents.add(Text(
       item.title,
@@ -75,7 +73,7 @@ class TextTileState extends State<TextTile> {
           fontSizeFactor: 1.2
       ),
     ));
-    if (_expanded) {
+    if (item.isExpanded) {
       contents.add(SizedBox(height: 8));
       contents.add(
         Text(

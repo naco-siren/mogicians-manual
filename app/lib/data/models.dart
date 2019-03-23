@@ -16,7 +16,7 @@ abstract class TabModel extends Model {
 
   List<ListItem> get items => List.unmodifiable(_items);
 
-  /// Loads json assets into model.
+  /// Loads json assets into model asynchronously.
   Future<void> loadData() async {
     if (items.isEmpty) {
       List<ListItem> loadedItems = await _parseItemFunction(_dataJsonFilename);

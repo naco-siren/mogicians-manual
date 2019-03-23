@@ -12,6 +12,7 @@ class HeaderItem implements ListItem {
 class TextItem implements ListItem {
   final String title;
   final String body;
+  bool isExpanded = false;
 
   TextItem(this.title, this.body);
 
