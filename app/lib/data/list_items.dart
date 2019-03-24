@@ -18,12 +18,6 @@ class TextItem implements ListItem {
 
   TextItem.fromJson(Map<String, dynamic> json)
       : title = json['title'], body = json['body'];
-
-  Map<String, dynamic> toJson() =>
-      {
-        'title': title,
-        'body': body,
-      };
 }
 
 // A ListItem that contains text data with a title and an image
@@ -36,11 +30,7 @@ class ImageItem implements ListItem {
   ImageItem.fromJson(Map<String, dynamic> json)
       : title = json['title'], src = json['src'];
 
-  Map<String, dynamic> toJson() =>
-      {
-        'title': title,
-        'src': src,
-      };
+  String get path => 'assets/images/$src';
 }
 
 // A ListItem that serves as a footer

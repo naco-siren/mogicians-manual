@@ -1,7 +1,12 @@
+//import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:clipboard_manager/clipboard_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 
 import 'package:mogicians_manual/data/list_items.dart';
 
@@ -41,7 +46,7 @@ class _TextTileState extends State<TextTile> {
 
   @override
   Widget build(BuildContext context) {
-    return new Card(
+    return Card(
         shape: BeveledRectangleBorder(),
         color: Colors.white,
         elevation: 2,
@@ -56,7 +61,7 @@ class _TextTileState extends State<TextTile> {
               _copyToClipboard(_item.title, _item.body);
             }
           },
-          child: new Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: _generateChildren(),
           )
@@ -149,9 +154,9 @@ class _ImageTileState extends State<ImageTile> {
           color: Colors.white,
           elevation: 2,
           child: InkWell(
-            onTap: () {},
-            onLongPress: () {},
-            child: new Column(
+            onTap: () => _toastSharingInfo(),
+            onLongPress: () => _shareImage(),
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
@@ -167,7 +172,7 @@ class _ImageTileState extends State<ImageTile> {
                   ),
                   FadeInImage(
                       placeholder: placeHolderImage,
-                      image: AssetImage('assets/images/${_item.src}')
+                      image: AssetImage(_item.path)
                   )
                 ]
             ),
@@ -175,6 +180,24 @@ class _ImageTileState extends State<ImageTile> {
           margin: EdgeInsets.all(0),
         )
     );
+  }
+
+  void _toastSharingInfo() {
+    Fluttertoast.showToast(
+        msg: "长按图片来发送",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.grey.shade700.withOpacity(0.9),
+        textColor: Colors.white,
+        fontSize: 14.0
+    );
+  }
+
+  void _shareImage() async {
+    final ByteData bytes = await rootBundle.load(_item.path);
+    await EsysFlutterShare.shareImage(_item.src, bytes,
+        '发送【${_item.title}】');
   }
 }
 

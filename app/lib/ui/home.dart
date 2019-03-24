@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
           child: TabDou(),
         );
       default:
-        return new Text('PLACEHOLDER');
+        return Text('PLACEHOLDER');
     }
   }
 
