@@ -17,13 +17,29 @@ class TextItem implements ListItem {
   TextItem(this.title, this.body);
 
   TextItem.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        body = json['body'];
+      : title = json['title'], body = json['body'];
 
   Map<String, dynamic> toJson() =>
       {
         'title': title,
         'body': body,
+      };
+}
+
+// A ListItem that contains text data with a title and an image
+class ImageItem implements ListItem {
+  final String title;
+  final String src;
+
+  ImageItem(this.title, this.src);
+
+  ImageItem.fromJson(Map<String, dynamic> json)
+      : title = json['title'], src = json['src'];
+
+  Map<String, dynamic> toJson() =>
+      {
+        'title': title,
+        'src': src,
       };
 }
 

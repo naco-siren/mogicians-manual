@@ -20,3 +20,6 @@ class MyApp extends StatelessWidget {
 }
 
 
+bool isTabletLayout(BuildContext context) =>
+    MediaQuery.of(context).size.shortestSide >= 600;
+

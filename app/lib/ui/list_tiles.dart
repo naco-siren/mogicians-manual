@@ -6,16 +6,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mogicians_manual/data/list_items.dart';
 
 class HeaderTile extends StatelessWidget {
-  final HeaderItem item;
-  
-  HeaderTile(this.item);
-  
+  HeaderTile(this._item);
+
+  final HeaderItem _item;
+
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.only(left: 18, top: 20, bottom: 8),
         child: Text(
-          item.heading,
+          _item.heading,
           style: Theme.of(context).textTheme.title.apply(
               color: Colors.yellowAccent.shade700,
               fontWeightDelta: 1,
@@ -26,18 +26,18 @@ class HeaderTile extends StatelessWidget {
 }
 
 class TextTile extends StatefulWidget {
-  final TextItem item;
+  TextTile(this._item);
 
-  TextTile(this.item);
+  final TextItem _item;
 
   @override
-  State createState() => TextTileState(item);
+  State createState() => _TextTileState(_item);
 }
 
-class TextTileState extends State<TextTile> {
-  final TextItem item;
+class _TextTileState extends State<TextTile> {
+  _TextTileState(this._item);
 
-  TextTileState(this.item);
+  final TextItem _item;
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +48,12 @@ class TextTileState extends State<TextTile> {
         child: InkWell(
           onTap: () {
             setState(() {
-              item.isExpanded = !item.isExpanded;
+              _item.isExpanded = !_item.isExpanded;
             });
           },
           onLongPress: () {
-            if (item.isExpanded) {
-              _copyToClipboard(item.title, item.body);
+            if (_item.isExpanded) {
+              _copyToClipboard(_item.title, _item.body);
             }
           },
           child: new Column(
@@ -68,16 +68,16 @@ class TextTileState extends State<TextTile> {
   List<Widget> _generateChildren() {
     List<Widget> contents = [];
     contents.add(Text(
-      item.title,
+      _item.title,
       style: Theme.of(context).textTheme.body1.apply(
           fontSizeFactor: 1.2
       ),
     ));
-    if (item.isExpanded) {
+    if (_item.isExpanded) {
       contents.add(SizedBox(height: 8));
       contents.add(
         Text(
-          item.body,
+          _item.body,
           style: Theme.of(context).textTheme.body1.apply(
               fontSizeFactor: 1.1,
               color: Colors.grey.shade600,
@@ -115,6 +115,66 @@ class TextTileState extends State<TextTile> {
           fontSize: 14.0
       );
     });
+  }
+}
+
+class ImageTile extends StatefulWidget {
+  ImageTile(this.item, this.isTablet);
+
+  final ImageItem item;
+  final bool isTablet;
+
+  @override
+  State createState() => _ImageTileState(item, isTablet);
+}
+
+class _ImageTileState extends State<ImageTile> {
+  final double paddingTablet = 8.0;
+  final double paddingPhone = 4.0;
+
+  _ImageTileState(this._item, this.isTablet);
+
+  final ImageItem _item;
+  final bool isTablet;
+
+  @override
+  Widget build(BuildContext context) {
+    final placeHolderImage = AssetImage('assets/images/dou_placeholder.jpg');
+
+    return Padding(
+        padding: EdgeInsets.all(isTablet ? paddingTablet : paddingPhone),
+        child:
+        Card(
+          shape: BeveledRectangleBorder(),
+          color: Colors.white,
+          elevation: 2,
+          child: InkWell(
+            onTap: () {},
+            onLongPress: () {},
+            child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                    child: Text(
+                      _item.title,
+                      style: Theme.of(context).textTheme.caption.apply(
+                        color: Colors.black,
+                        fontSizeFactor: isTablet ? 1.3 : 1.0,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  FadeInImage(
+                      placeholder: placeHolderImage,
+                      image: AssetImage('assets/images/${_item.src}')
+                  )
+                ]
+            ),
+          ),
+          margin: EdgeInsets.all(0),
+        )
+    );
   }
 }
 

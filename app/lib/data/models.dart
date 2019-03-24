@@ -39,3 +39,10 @@ class TabXueModel extends TabModel {
 
   TabXueModel() : super();
 }
+
+class TabDouModel extends TabModel {
+  String _dataJsonFilename = "dou";
+  Future<List<ListItem>> Function(String) _parseItemFunction = parseImageItems;
+
+  TabDouModel() : super();
+}

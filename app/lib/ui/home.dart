@@ -17,8 +17,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  var shuoModel = TabShuoModel();
-  var xueModel = TabXueModel();
+  var _shuoModel = TabShuoModel();
+  var _xueModel = TabXueModel();
+  var _douModel = TabDouModel();
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +40,18 @@ class _HomePageState extends State<HomePage> {
     switch (_selectedIndex) {
       case 0:
         return ScopedModel<TabShuoModel>(
-          model: shuoModel,
+          model: _shuoModel,
           child: TabShuo(),
         );
       case 1:
         return ScopedModel<TabXueModel>(
-          model: xueModel,
+          model: _xueModel,
           child: TabXue(),
+        );
+      case 2:
+        return ScopedModel<TabDouModel>(
+          model: _douModel,
+          child: TabDou(),
         );
       default:
         return new Text('PLACEHOLDER');
