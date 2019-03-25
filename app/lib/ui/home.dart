@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   var _shuoModel = TabShuoModel();
   var _xueModel = TabXueModel();
   var _douModel = TabDouModel();
+  var _changModel = TabChangModel();
 
   @override
   Widget build(BuildContext context) {

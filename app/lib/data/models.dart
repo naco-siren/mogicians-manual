@@ -46,3 +46,10 @@ class TabDouModel extends TabModel {
 
   TabDouModel() : super();
 }
+
+class TabChangModel extends TabModel {
+  String _dataJsonFilename = "chang";
+  Future<List<ListItem>> Function(String) _parseItemFunction = parseMusicItems;
+
+  TabChangModel() : super();
+}

@@ -29,3 +29,6 @@ Future<List<ListItem>> parseTextItems(String fileName) async =>
 
 Future<List<ListItem>> parseImageItems(String fileName) async =>
     parseListItems(fileName, (item) => ImageItem.fromJson(item));
+
+Future<List<ListItem>> parseMusicItems(String fileName) async =>
+    parseListItems(fileName, (item) => MusicItem.fromJson(item));

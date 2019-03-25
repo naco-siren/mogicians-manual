@@ -33,5 +33,18 @@ class ImageItem implements ListItem {
   String get path => 'assets/images/$src';
 }
 
+// A ListItem that contains text data with a title and an music
+class MusicItem implements ListItem {
+  final String title;
+  final String src;
+
+  MusicItem(this.title, this.src);
+
+  MusicItem.fromJson(Map<String, dynamic> json)
+      : title = json['title'], src = json['src'];
+
+  String get path => 'assets/audio/$src';
+}
+
 // A ListItem that serves as a footer
 class FooterItem implements ListItem {}
