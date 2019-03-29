@@ -10,79 +10,78 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 
 import 'package:mogicians_manual/data/list_items.dart';
 
+typedef ItemTapCallback = void Function(int);
+
 class HeaderTile extends StatelessWidget {
   HeaderTile(this._item);
 
   final HeaderItem _item;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.only(left: 18, top: 20, bottom: 8),
-        child: Text(
-          _item.heading,
-          style: Theme.of(context).textTheme.title.apply(
-              color: Colors.yellowAccent.shade700,
-              fontWeightDelta: 1,
-          ),
-        )
+  Widget build(BuildContext context) =>
+    Container(
+      padding: EdgeInsets.only(left: 18, top: 20, bottom: 8),
+      child: Text(
+        _item.heading,
+        style: Theme.of(context).textTheme.title.apply(
+            color: Colors.yellowAccent.shade700,
+            fontWeightDelta: 1,
+        ),
+      )
     );
-  }
 }
 
 class TextTile extends StatefulWidget {
-  TextTile(this._item);
+  TextTile(this.item);
 
-  final TextItem _item;
+  final TextItem item;
 
   @override
-  State createState() => _TextTileState(_item);
+  State createState() => _TextTileState();
 }
 
 class _TextTileState extends State<TextTile> {
-  _TextTileState(this._item);
-
-  final TextItem _item;
-
   @override
   Widget build(BuildContext context) {
+    final item = widget.item;
     return Card(
-        shape: BeveledRectangleBorder(),
-        color: Colors.white,
-        elevation: 2,
-        child: InkWell(
+      shape: BeveledRectangleBorder(),
+      color: Colors.white,
+      elevation: 2,
+      child: InkWell(
           onTap: () {
             setState(() {
-              _item.isExpanded = !_item.isExpanded;
+              item.isExpanded = !item.isExpanded;
             });
           },
           onLongPress: () {
-            if (_item.isExpanded) {
-              _copyToClipboard(_item.title, _item.body);
+            if (item.isExpanded) {
+              _copyToClipboard(item.title, item.body);
             }
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: _generateChildren(),
           )
-        ),
-        margin: EdgeInsets.all(0),
+      ),
+      margin: EdgeInsets.all(0),
     );
   }
 
   List<Widget> _generateChildren() {
+    final item = widget.item;
     List<Widget> contents = [];
     contents.add(Text(
-      _item.title,
+      item.title,
       style: Theme.of(context).textTheme.body1.apply(
           fontSizeFactor: 1.2
       ),
     ));
-    if (_item.isExpanded) {
+    if (item.isExpanded) {
       contents.add(SizedBox(height: 8));
       contents.add(
         Text(
-          _item.body,
+          item.body,
           style: Theme.of(context).textTheme.body1.apply(
               fontSizeFactor: 1.1,
               color: Colors.grey.shade600,
@@ -130,24 +129,17 @@ class ImageTile extends StatefulWidget {
   final bool isTablet;
 
   @override
-  State createState() => _ImageTileState(item, isTablet);
+  State createState() => _ImageTileState();
 }
 
+const double paddingTablet = 8.0;
+const double paddingPhone = 4.0;
+
 class _ImageTileState extends State<ImageTile> {
-  final double paddingTablet = 8.0;
-  final double paddingPhone = 4.0;
-
-  _ImageTileState(this._item, this.isTablet);
-
-  final ImageItem _item;
-  final bool isTablet;
-
   @override
-  Widget build(BuildContext context) {
-    final placeHolderImage = AssetImage('assets/images/dou_placeholder.jpg');
-
-    return Padding(
-        padding: EdgeInsets.all(isTablet ? paddingTablet : paddingPhone),
+  Widget build(BuildContext context) =>
+      Padding(
+        padding: EdgeInsets.all(widget.isTablet ? paddingTablet : paddingPhone),
         child:
         Card(
           shape: BeveledRectangleBorder(),
@@ -157,30 +149,29 @@ class _ImageTileState extends State<ImageTile> {
             onTap: () => _toastSharingInfo(),
             onLongPress: () => _shareImage(),
             child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                    child: Text(
-                      _item.title,
-                      style: Theme.of(context).textTheme.caption.apply(
-                        color: Colors.black,
-                        fontSizeFactor: isTablet ? 1.3 : 1.0,
-                      ),
-                      textAlign: TextAlign.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+                  child: Text(
+                    widget.item.title,
+                    style: Theme.of(context).textTheme.caption.apply(
+                      color: Colors.black,
+                      fontSizeFactor: widget.isTablet ? 1.3 : 1.0,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  FadeInImage(
-                      placeholder: placeHolderImage,
-                      image: AssetImage(_item.path)
-                  )
-                ]
+                ),
+                FadeInImage(
+                  placeholder: AssetImage('assets/images/dou_placeholder.jpg'),
+                  image: AssetImage(widget.item.path)
+                )
+              ]
             ),
           ),
           margin: EdgeInsets.all(0),
         )
     );
-  }
 
   void _toastSharingInfo() {
     Fluttertoast.showToast(
@@ -195,9 +186,72 @@ class _ImageTileState extends State<ImageTile> {
   }
 
   void _shareImage() async {
-    final ByteData bytes = await rootBundle.load(_item.path);
-    await EsysFlutterShare.shareImage(_item.src, bytes,
-        '发送【${_item.title}】');
+    final item = widget.item;
+    final ByteData bytes = await rootBundle.load(item.path);
+    await EsysFlutterShare.shareImage(item.src, bytes,
+        '发送【${item.title}】');
+  }
+}
+
+class MusicTile extends StatefulWidget {
+  MusicTile(this.item, this.index, this.callback);
+
+  final MusicItem item;
+  final int index;
+  final ItemTapCallback callback;
+
+  @override
+  State createState() => _MusicTileState();
+}
+
+class _MusicTileState extends State<MusicTile> {
+  @override
+  Widget build(BuildContext context) =>
+    Card(
+      key: ObjectKey(widget.item),
+      shape: BeveledRectangleBorder(),
+      color: Colors.white,
+      elevation: 2,
+      child: InkWell(
+          onTap: _onTapped,
+          onLongPress: () {},
+          child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  // TODO: redo this row by replacing the status Text with an anim
+                  Flexible(child: Text(widget.item.status.toString().split('\.')[1])),
+                  SizedBox(width: 18),
+                  Expanded(child: Text(widget.item.title)),
+                ],
+              )
+          )
+      ),
+      margin: EdgeInsets.all(0),
+    );
+
+  void _onTapped() {
+    switch(widget.item.status) {
+      case AudioStatus.STOPPED:
+        setState(() {
+          widget.callback(widget.index);
+        });
+        break;
+      case AudioStatus.RESUMED:
+        setState(() {
+          widget.item.status = AudioStatus.PAUSED;
+          // TODO: pause playing
+        });
+
+        break;
+      case AudioStatus.PAUSED:
+        setState(() {
+          widget.item.status = AudioStatus.RESUMED;
+          // TODO: resume playing
+        });
+        break;
+    }
   }
 }
 

@@ -38,12 +38,18 @@ class MusicItem implements ListItem {
   final String title;
   final String src;
 
+  AudioStatus status = AudioStatus.STOPPED;
+
   MusicItem(this.title, this.src);
 
   MusicItem.fromJson(Map<String, dynamic> json)
       : title = json['title'], src = json['src'];
 
   String get path => 'assets/audio/$src';
+}
+
+enum AudioStatus {
+  STOPPED, RESUMED, PAUSED
 }
 
 // A ListItem that serves as a footer

@@ -54,8 +54,13 @@ class _HomePageState extends State<HomePage> {
           model: _douModel,
           child: TabDou(),
         );
+      case 3:
+        return ScopedModel<TabChangModel>(
+          model: _changModel,
+          child: TabChang(_selectMusicItem),
+        );
       default:
-        return Text('PLACEHOLDER');
+        throw Exception('Invalid index!');
     }
   }
 
@@ -69,12 +74,16 @@ class _HomePageState extends State<HomePage> {
         BottomNavigationBarItem(title: Text('【唱】'), icon: Icon(Icons.music_note)),
       ],
       currentIndex: _selectedIndex,
-      onTap: _selectItem,
+      onTap: _selectTabItem,
     );
 
-  void _selectItem(int index) {
+  void _selectTabItem(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void _selectMusicItem(int index) {
+    _changModel.curIdx = index;
   }
 }

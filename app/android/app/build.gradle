@@ -32,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "io.github.naco_siren.gmgard"
+        applicationId "io.github.naco_siren.mogicians_manual"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()

@@ -8,6 +8,8 @@ import 'package:mogicians_manual/ui/list_tiles.dart';
 import 'package:mogicians_manual/data/list_items.dart';
 import 'package:mogicians_manual/data/models.dart';
 
+typedef MusicItemTapCallback = void Function(int);
+
 abstract class BaseTab extends StatelessWidget {
   final int colSizeTablet = 5;
   final int colSizePhone = 3;
@@ -37,12 +39,24 @@ abstract class BaseTab extends StatelessWidget {
       return _itemBuilder(item);
     }
   }
+
+  Widget _musicItemBuilder(
+      ListItem item,
+      int index,
+      AudioStatus status,
+      ItemTapCallback callback) {
+    if (item is MusicItem) {
+      return MusicTile(item, index, callback);
+    } else {
+      return _itemBuilder(item);
+    }
+  }
 }
 
 class TabShuo extends BaseTab {
   @override
-  Widget build(BuildContext context) {
-    return ScopedModelDescendant<TabShuoModel>(
+  Widget build(BuildContext context) =>
+    ScopedModelDescendant<TabShuoModel>(
       builder: (context, child, model) =>
         ListView.builder(
             key: PageStorageKey<String>("tab_shuo"),
@@ -50,13 +64,12 @@ class TabShuo extends BaseTab {
             itemBuilder: (context, index) => _textItemBuilder(model.items[index]),
         ),
     );
-  }
 }
 
 class TabXue extends BaseTab {
   @override
-  Widget build(BuildContext context) {
-    return ScopedModelDescendant<TabXueModel>(
+  Widget build(BuildContext context) =>
+    ScopedModelDescendant<TabXueModel>(
       builder: (context, child, model) =>
           ListView.builder(
               key: PageStorageKey<String>("tab_xue"),
@@ -64,7 +77,6 @@ class TabXue extends BaseTab {
               itemBuilder: (context, index) => _textItemBuilder(model.items[index]),
           ),
     );
-  }
 }
 
 class TabDou extends BaseTab {
@@ -94,4 +106,26 @@ class TabDou extends BaseTab {
         )
     );
   }
+}
+
+class TabChang extends BaseTab {
+  final MusicItemTapCallback onItemTap;
+
+  TabChang(this.onItemTap);
+
+  @override
+  Widget build(BuildContext context) =>
+    ScopedModelDescendant<TabChangModel>(
+      builder: (context, child, model) =>
+        ListView.builder(
+          key: PageStorageKey<String>("tab_chang"),
+          itemCount: model.items.length,
+          itemBuilder: (context, index) => _musicItemBuilder(
+              model.items[index],
+              index,
+              index == model.curIdx ? AudioStatus.RESUMED : AudioStatus.STOPPED,
+              onItemTap,
+          ),
+        ),
+    );
 }
