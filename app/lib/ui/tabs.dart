@@ -41,10 +41,7 @@ abstract class BaseTab extends StatelessWidget {
   }
 
   Widget _musicItemBuilder(
-      ListItem item,
-      int index,
-      AudioStatus status,
-      ItemTapCallback callback) {
+      ListItem item, int index, ItemTapCallback callback) {
     if (item is MusicItem) {
       return MusicTile(item, index, callback);
     } else {
@@ -55,28 +52,26 @@ abstract class BaseTab extends StatelessWidget {
 
 class TabShuo extends BaseTab {
   @override
-  Widget build(BuildContext context) =>
-    ScopedModelDescendant<TabShuoModel>(
-      builder: (context, child, model) =>
-        ListView.builder(
-            key: PageStorageKey<String>("tab_shuo"),
-            itemCount: model.items.length,
-            itemBuilder: (context, index) => _textItemBuilder(model.items[index]),
-        ),
-    );
+  Widget build(BuildContext context) => ScopedModelDescendant<TabShuoModel>(
+        builder: (context, child, model) => ListView.builder(
+              key: PageStorageKey<String>("tab_shuo"),
+              itemCount: model.items.length,
+              itemBuilder: (context, index) =>
+                  _textItemBuilder(model.items[index]),
+            ),
+      );
 }
 
 class TabXue extends BaseTab {
   @override
-  Widget build(BuildContext context) =>
-    ScopedModelDescendant<TabXueModel>(
-      builder: (context, child, model) =>
-          ListView.builder(
+  Widget build(BuildContext context) => ScopedModelDescendant<TabXueModel>(
+        builder: (context, child, model) => ListView.builder(
               key: PageStorageKey<String>("tab_xue"),
               itemCount: model.items.length,
-              itemBuilder: (context, index) => _textItemBuilder(model.items[index]),
-          ),
-    );
+              itemBuilder: (context, index) =>
+                  _textItemBuilder(model.items[index]),
+            ),
+      );
 }
 
 class TabDou extends BaseTab {
@@ -86,25 +81,24 @@ class TabDou extends BaseTab {
     final crossAxisCount = isTablet ? colSizeTablet : colSizePhone;
 
     return ScopedModelDescendant<TabDouModel>(
-      builder: (context, child, model) =>
-        StaggeredGridView.countBuilder(
-          key: PageStorageKey<String>("tab_dou"),
-          crossAxisCount: crossAxisCount,
-          itemCount: model.items.length,
-          itemBuilder: (BuildContext context, int index) =>
-              _imageItemBuilder(model.items[index], isTablet),
-          staggeredTileBuilder: (int index) {
-            final item = model.items[index];
-            if (item is HeaderItem || item is FooterItem) {
-              return StaggeredTile.extent(crossAxisCount, 60);
-            } else {
-              return StaggeredTile.fit(1);
-            }
-          },
-          mainAxisSpacing: 0, // isTablet ? spacingTablet : spacingPhone,
-          crossAxisSpacing: 0, // isTablet ? spacingTablet : spacingPhone,
-        )
-    );
+        builder: (context, child, model) => StaggeredGridView.countBuilder(
+              key: PageStorageKey<String>("tab_dou"),
+              crossAxisCount: crossAxisCount,
+              itemCount: model.items.length,
+              itemBuilder: (BuildContext context, int index) =>
+                  _imageItemBuilder(model.items[index], isTablet),
+              staggeredTileBuilder: (int index) {
+                final item = model.items[index];
+                if (item is HeaderItem || item is FooterItem) {
+                  return StaggeredTile.extent(crossAxisCount, 60);
+                } else {
+                  return StaggeredTile.fit(1);
+                }
+              },
+              mainAxisSpacing: 0,
+              // isTablet ? spacingTablet : spacingPhone,
+              crossAxisSpacing: 0, // isTablet ? spacingTablet : spacingPhone,
+            ));
   }
 }
 
@@ -114,18 +108,15 @@ class TabChang extends BaseTab {
   TabChang(this.onItemTap);
 
   @override
-  Widget build(BuildContext context) =>
-    ScopedModelDescendant<TabChangModel>(
-      builder: (context, child, model) =>
-        ListView.builder(
-          key: PageStorageKey<String>("tab_chang"),
-          itemCount: model.items.length,
-          itemBuilder: (context, index) => _musicItemBuilder(
-              model.items[index],
-              index,
-              index == model.curIdx ? AudioStatus.RESUMED : AudioStatus.STOPPED,
-              onItemTap,
-          ),
-        ),
-    );
+  Widget build(BuildContext context) => ScopedModelDescendant<TabChangModel>(
+        builder: (context, child, model) => ListView.builder(
+              key: PageStorageKey<String>("tab_chang"),
+              itemCount: model.items.length,
+              itemBuilder: (context, index) => _musicItemBuilder(
+                    model.items[index],
+                    index,
+                    onItemTap,
+                  ),
+            ),
+      );
 }
