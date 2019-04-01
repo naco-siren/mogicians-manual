@@ -17,17 +17,15 @@ class HeaderTile extends StatelessWidget {
   final HeaderItem _item;
 
   @override
-  Widget build(BuildContext context) =>
-    Container(
+  Widget build(BuildContext context) => Container(
       padding: EdgeInsets.only(left: 18, top: 20, bottom: 8),
       child: Text(
         _item.heading,
         style: Theme.of(context).textTheme.title.apply(
-            color: Colors.yellowAccent.shade700,
-            fontWeightDelta: 1,
-        ),
-      )
-    );
+              color: Colors.yellowAccent.shade700,
+              fontWeightDelta: 1,
+            ),
+      ));
 }
 
 class TextTile extends StatefulWidget {
@@ -61,8 +59,7 @@ class _TextTileState extends State<TextTile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: _generateChildren(),
-          )
-      ),
+          )),
       margin: EdgeInsets.all(0),
     );
   }
@@ -72,9 +69,7 @@ class _TextTileState extends State<TextTile> {
     List<Widget> contents = [];
     contents.add(Text(
       item.title,
-      style: Theme.of(context).textTheme.body1.apply(
-          fontSizeFactor: 1.2
-      ),
+      style: Theme.of(context).textTheme.body1.apply(fontSizeFactor: 1.2),
     ));
     if (item.isExpanded) {
       contents.add(SizedBox(height: 8));
@@ -82,13 +77,13 @@ class _TextTileState extends State<TextTile> {
         Text(
           item.body,
           style: Theme.of(context).textTheme.body1.apply(
-              fontSizeFactor: 1.1,
-              color: Colors.grey.shade600,
-          ),
+                fontSizeFactor: 1.1,
+                color: Colors.grey.shade600,
+              ),
         ),
       );
     }
-    
+
     List<Widget> children = [];
     children.add(Container(
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
@@ -115,8 +110,7 @@ class _TextTileState extends State<TextTile> {
           timeInSecForIos: 1,
           backgroundColor: Colors.grey.shade700.withOpacity(0.9),
           textColor: Colors.white,
-          fontSize: 14.0
-      );
+          fontSize: 14.0);
     });
   }
 }
@@ -136,41 +130,35 @@ const double paddingPhone = 4.0;
 
 class _ImageTileState extends State<ImageTile> {
   @override
-  Widget build(BuildContext context) =>
-      Padding(
-        padding: EdgeInsets.all(widget.isTablet ? paddingTablet : paddingPhone),
-        child:
-        Card(
-          shape: BeveledRectangleBorder(),
-          color: Colors.white,
-          elevation: 2,
-          child: InkWell(
-            onTap: () => _toastSharingInfo(),
-            onLongPress: () => _shareImage(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                  child: Text(
-                    widget.item.title,
-                    style: Theme.of(context).textTheme.caption.apply(
+  Widget build(BuildContext context) => Padding(
+      padding: EdgeInsets.all(widget.isTablet ? paddingTablet : paddingPhone),
+      child: Card(
+        shape: BeveledRectangleBorder(),
+        color: Colors.white,
+        elevation: 2,
+        child: InkWell(
+          onTap: () => _toastSharingInfo(),
+          onLongPress: () => _shareImage(),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+              child: Text(
+                widget.item.title,
+                style: Theme.of(context).textTheme.caption.apply(
                       color: Colors.black,
                       fontSizeFactor: widget.isTablet ? 1.3 : 1.0,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                FadeInImage(
-                  placeholder: AssetImage('assets/images/dou_placeholder.jpg'),
-                  image: AssetImage(widget.item.path)
-                )
-              ]
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          margin: EdgeInsets.all(0),
-        )
-    );
+            FadeInImage(
+                placeholder: AssetImage('assets/images/dou_placeholder.jpg'),
+                image: AssetImage(widget.item.path))
+          ]),
+        ),
+        margin: EdgeInsets.all(0),
+      ));
 
   void _toastSharingInfo() {
     Fluttertoast.showToast(
@@ -180,15 +168,13 @@ class _ImageTileState extends State<ImageTile> {
         timeInSecForIos: 1,
         backgroundColor: Colors.grey.shade700.withOpacity(0.9),
         textColor: Colors.white,
-        fontSize: 14.0
-    );
+        fontSize: 14.0);
   }
 
   void _shareImage() async {
     final item = widget.item;
     final ByteData bytes = await rootBundle.load(item.path);
-    await EsysFlutterShare.shareImage(item.src, bytes,
-        '发送【${item.title}】');
+    await EsysFlutterShare.shareImage(item.src, bytes, '发送【${item.title}】');
   }
 }
 
@@ -205,33 +191,51 @@ class MusicTile extends StatefulWidget {
 
 class _MusicTileState extends State<MusicTile> {
   @override
-  Widget build(BuildContext context) =>
-    Card(
-      key: ObjectKey(widget.item),
-      shape: BeveledRectangleBorder(),
-      color: Colors.white,
-      elevation: 2,
-      child: InkWell(
-          onTap: _onTapped,
-          onLongPress: () {},
-          child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  // TODO: redo this row by replacing the status Text with an anim
-                  Flexible(child: Text(widget.item.status.toString().split('\.')[1])),
-                  SizedBox(width: 18),
-                  Expanded(child: Text(widget.item.title)),
-                ],
-              )
-          )
-      ),
-      margin: EdgeInsets.all(0),
-    );
+  Widget build(BuildContext context) => Card(
+        key: ObjectKey(widget.item),
+        shape: BeveledRectangleBorder(),
+        color: Colors.white,
+        elevation: 2,
+        child: InkWell(
+            onTap: _onTapped,
+            onLongPress: () {},
+            child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    _playControl(widget.item.status),
+                    SizedBox(width: 18),
+                    Expanded(
+                        child: Text(
+                          widget.item.title,
+                          style: Theme.of(context).textTheme.body1.apply(
+                            fontSizeFactor: 1.2,
+                          ),
+                    )),
+                  ],
+                ))),
+        margin: EdgeInsets.all(0),
+      );
+
+  Widget _playControl(AudioStatus status) {
+    IconData iconData;
+    switch (status) {
+      case AudioStatus.STOPPED:
+        iconData = Icons.play_arrow;
+        break;
+      case AudioStatus.RESUMED:
+        iconData = Icons.pause_circle_filled;
+        break;
+      case AudioStatus.PAUSED:
+        iconData = Icons.play_circle_filled;
+        break;
+    }
+    return Icon(iconData, size: 30, color: Colors.grey.shade700);
+  }
 
   void _onTapped() {
-    switch(widget.item.status) {
+    switch (widget.item.status) {
       case AudioStatus.STOPPED:
         setState(() {
           widget.callback(widget.index);
