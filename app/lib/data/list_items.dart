@@ -17,7 +17,8 @@ class TextItem implements ListItem {
   TextItem(this.title, this.body);
 
   TextItem.fromJson(Map<String, dynamic> json)
-      : title = json['title'], body = json['body'];
+      : title = json['title'],
+        body = json['body'];
 }
 
 // A ListItem that contains text data with a title and an image
@@ -28,7 +29,8 @@ class ImageItem implements ListItem {
   ImageItem(this.title, this.src);
 
   ImageItem.fromJson(Map<String, dynamic> json)
-      : title = json['title'], src = json['src'];
+      : title = json['title'],
+        src = json['src'];
 
   String get path => 'assets/images/$src';
 }
@@ -43,14 +45,13 @@ class MusicItem implements ListItem {
   MusicItem(this.title, this.src);
 
   MusicItem.fromJson(Map<String, dynamic> json)
-      : title = json['title'], src = json['src'];
+      : title = json['title'],
+        src = json['src'];
 
   String get path => 'assets/audio/$src';
 }
 
-enum AudioStatus {
-  STOPPED, RESUMED, PAUSED
-}
+enum AudioStatus { STOPPED, RESUMED, PAUSED }
 
 // A ListItem that serves as a footer
 class FooterItem implements ListItem {}

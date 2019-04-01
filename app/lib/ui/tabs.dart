@@ -40,8 +40,7 @@ abstract class BaseTab extends StatelessWidget {
     }
   }
 
-  Widget _musicItemBuilder(
-      ListItem item, int index, ItemTapCallback callback) {
+  Widget _musicItemBuilder(ListItem item, int index, ItemTapCallback callback) {
     if (item is MusicItem) {
       return MusicTile(item, index, callback);
     } else {

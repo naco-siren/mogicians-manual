@@ -219,19 +219,16 @@ class _MusicTileState extends State<MusicTile> {
       );
 
   Widget _playControl(AudioStatus status) {
-    IconData iconData;
     switch (status) {
       case AudioStatus.STOPPED:
-        iconData = Icons.play_arrow;
-        break;
+        return Icon(Icons.play_arrow, size: 30, color: Colors.grey.shade400);
       case AudioStatus.RESUMED:
-        iconData = Icons.pause_circle_filled;
-        break;
+        return Icon(Icons.pause_circle_filled, size: 30, color: Colors.grey.shade700);
       case AudioStatus.PAUSED:
-        iconData = Icons.play_circle_filled;
-        break;
+        return Icon(Icons.play_circle_filled, size: 30, color: Colors.grey.shade700);
+      default:
+        throw Exception("Invalid audio status!");
     }
-    return Icon(iconData, size: 30, color: Colors.grey.shade700);
   }
 
   void _onTapped() {

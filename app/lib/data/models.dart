@@ -3,7 +3,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:mogicians_manual/data/list_items.dart';
 import 'package:mogicians_manual/data/data_importer.dart';
 
-
 abstract class TabModel extends Model {
   final List<ListItem> _items = [];
 
@@ -54,14 +53,14 @@ class TabChangModel extends TabModel {
   TabChangModel() : super();
 
   int _curIdx = -1;
+
   int get curIdx => _curIdx;
+
   set curIdx(int value) {
-    if (value == curIdx || value < 0 || value >= items.length)
-      return;
+    if (value == curIdx || value < 0 || value >= items.length) return;
 
     for (var item in items) {
-      if (item is MusicItem)
-        item.status = AudioStatus.STOPPED;
+      if (item is MusicItem) item.status = AudioStatus.STOPPED;
     }
 
     final curItem = items[value];
