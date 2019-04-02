@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard_manager/clipboard_manager.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -237,32 +238,30 @@ class _MusicTileState extends State<MusicTile> {
   }
 
   void _onTapped(BuildContext context, MusicItem item) async {
+    final player = MusicPlayer.of(context).audioPlayer;
     switch (widget.item.status) {
       case AudioStatus.STOPPED:
         final file =
             new File('${(await getTemporaryDirectory()).path}/${item.src}');
         await file.writeAsBytes(
             (await rootBundle.load(item.path)).buffer.asUint8List());
-        final result = await MusicPlayer.of(context)
-            .audioPlayer
-            .play(file.path, isLocal: true);
-        if (result == 1) {
+        await player.setUrl(file.path);
+        await player.setReleaseMode(ReleaseMode.LOOP);
+        if (await player.resume() == 1) {
           setState(() => widget.callback(widget.index));
         } else {
           _toastError("播放");
         }
         break;
       case AudioStatus.RESUMED:
-        final result = await MusicPlayer.of(context).audioPlayer.pause();
-        if (result == 1) {
+        if (await player.pause() == 1) {
           setState(() => widget.item.status = AudioStatus.PAUSED);
         } else {
           _toastError("暂停");
         }
         break;
       case AudioStatus.PAUSED:
-        final result = await MusicPlayer.of(context).audioPlayer.resume();
-        if (result == 1) {
+        if (await player.resume() == 1) {
           setState(() => widget.item.status = AudioStatus.RESUMED);
         } else {
           _toastError("恢复播放");
