@@ -1,13 +1,16 @@
 import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:clipboard_manager/clipboard_manager.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:mogicians_manual/data/list_items.dart';
+import 'package:mogicians_manual/service/music_player.dart';
 
 typedef ItemTapCallback = void Function(int);
 
@@ -197,7 +200,7 @@ class _MusicTileState extends State<MusicTile> {
         color: Colors.white,
         elevation: 2,
         child: InkWell(
-            onTap: _onTapped,
+            onTap: () => _onTapped(context, widget.item),
             onLongPress: () {},
             child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
@@ -208,8 +211,8 @@ class _MusicTileState extends State<MusicTile> {
                     SizedBox(width: 18),
                     Expanded(
                         child: Text(
-                          widget.item.title,
-                          style: Theme.of(context).textTheme.body1.apply(
+                      widget.item.title,
+                      style: Theme.of(context).textTheme.body1.apply(
                             fontSizeFactor: 1.2,
                           ),
                     )),
@@ -223,35 +226,60 @@ class _MusicTileState extends State<MusicTile> {
       case AudioStatus.STOPPED:
         return Icon(Icons.play_arrow, size: 30, color: Colors.grey.shade400);
       case AudioStatus.RESUMED:
-        return Icon(Icons.pause_circle_filled, size: 30, color: Colors.grey.shade700);
+        return Icon(Icons.pause_circle_filled,
+            size: 30, color: Colors.grey.shade700);
       case AudioStatus.PAUSED:
-        return Icon(Icons.play_circle_filled, size: 30, color: Colors.grey.shade700);
+        return Icon(Icons.play_circle_filled,
+            size: 30, color: Colors.grey.shade700);
       default:
         throw Exception("Invalid audio status!");
     }
   }
 
-  void _onTapped() {
+  void _onTapped(BuildContext context, MusicItem item) async {
     switch (widget.item.status) {
       case AudioStatus.STOPPED:
-        setState(() {
-          widget.callback(widget.index);
-        });
+        final file =
+            new File('${(await getTemporaryDirectory()).path}/${item.src}');
+        await file.writeAsBytes(
+            (await rootBundle.load(item.path)).buffer.asUint8List());
+        final result = await MusicPlayer.of(context)
+            .audioPlayer
+            .play(file.path, isLocal: true);
+        if (result == 1) {
+          setState(() => widget.callback(widget.index));
+        } else {
+          _toastError("播放");
+        }
         break;
       case AudioStatus.RESUMED:
-        setState(() {
-          widget.item.status = AudioStatus.PAUSED;
-          // TODO: pause playing
-        });
-
+        final result = await MusicPlayer.of(context).audioPlayer.pause();
+        if (result == 1) {
+          setState(() => widget.item.status = AudioStatus.PAUSED);
+        } else {
+          _toastError("暂停");
+        }
         break;
       case AudioStatus.PAUSED:
-        setState(() {
-          widget.item.status = AudioStatus.RESUMED;
-          // TODO: resume playing
-        });
+        final result = await MusicPlayer.of(context).audioPlayer.resume();
+        if (result == 1) {
+          setState(() => widget.item.status = AudioStatus.RESUMED);
+        } else {
+          _toastError("恢复播放");
+        }
         break;
     }
+  }
+
+  void _toastError(String subject) {
+    Fluttertoast.showToast(
+        msg: "试图$subject时发生错误",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 1,
+        backgroundColor: Colors.grey.shade700.withOpacity(0.9),
+        textColor: Colors.white,
+        fontSize: 14.0);
   }
 }
 

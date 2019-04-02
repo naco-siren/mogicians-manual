@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:mogicians_manual/ui/home.dart';
+import 'package:mogicians_manual/service/music_player.dart';
+
+import 'package:audioplayers/audioplayers.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,7 +17,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(title: title),
+      home: MusicPlayer(
+        child: HomePage(title: title),
+        audioPlayer: new AudioPlayer(),
+      )
     );
   }
 }
