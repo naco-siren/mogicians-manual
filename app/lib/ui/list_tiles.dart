@@ -1,14 +1,11 @@
 import 'dart:typed_data';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard_manager/clipboard_manager.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:mogicians_manual/data/list_items.dart';
 import 'package:mogicians_manual/service/music_player.dart';
@@ -238,16 +235,10 @@ class _MusicTileState extends State<MusicTile> {
   }
 
   void _onTapped(BuildContext context, MusicItem item) async {
-    final player = MusicPlayer.of(context).audioPlayer;
+    final player = MusicPlayer.of(context);
     switch (widget.item.status) {
       case AudioStatus.STOPPED:
-        final file =
-            new File('${(await getTemporaryDirectory()).path}/${item.src}');
-        await file.writeAsBytes(
-            (await rootBundle.load(item.path)).buffer.asUint8List());
-        await player.setUrl(file.path);
-        await player.setReleaseMode(ReleaseMode.LOOP);
-        if (await player.resume() == 1) {
+        if (await player.resume(item: item) == 1) {
           setState(() => widget.callback(widget.index));
         } else {
           _toastError("播放");
