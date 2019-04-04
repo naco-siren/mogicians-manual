@@ -52,25 +52,27 @@ abstract class BaseTab extends StatelessWidget {
 class TabShuo extends BaseTab {
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabShuoModel>(
-        builder: (context, child, model) => ListView.builder(
+      builder: (context, child, model) => Scrollbar(
+            child: ListView.builder(
               key: PageStorageKey<String>("tab_shuo"),
               itemCount: model.items.length,
               itemBuilder: (context, index) =>
                   _textItemBuilder(model.items[index]),
             ),
-      );
+          ));
 }
 
 class TabXue extends BaseTab {
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabXueModel>(
-        builder: (context, child, model) => ListView.builder(
+      builder: (context, child, model) => Scrollbar(
+            child: ListView.builder(
               key: PageStorageKey<String>("tab_xue"),
               itemCount: model.items.length,
               itemBuilder: (context, index) =>
                   _textItemBuilder(model.items[index]),
             ),
-      );
+          ));
 }
 
 class TabDou extends BaseTab {
@@ -80,7 +82,8 @@ class TabDou extends BaseTab {
     final crossAxisCount = isTablet ? colSizeTablet : colSizePhone;
 
     return ScopedModelDescendant<TabDouModel>(
-        builder: (context, child, model) => StaggeredGridView.countBuilder(
+        builder: (context, child, model) => Scrollbar(
+                child: StaggeredGridView.countBuilder(
               key: PageStorageKey<String>("tab_dou"),
               crossAxisCount: crossAxisCount,
               itemCount: model.items.length,
@@ -97,7 +100,7 @@ class TabDou extends BaseTab {
               mainAxisSpacing: 0,
               // isTablet ? spacingTablet : spacingPhone,
               crossAxisSpacing: 0, // isTablet ? spacingTablet : spacingPhone,
-            ));
+            )));
   }
 }
 
@@ -108,7 +111,8 @@ class TabChang extends BaseTab {
 
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabChangModel>(
-        builder: (context, child, model) => ListView.builder(
+      builder: (context, child, model) => Scrollbar(
+            child: ListView.builder(
               key: PageStorageKey<String>("tab_chang"),
               itemCount: model.items.length,
               itemBuilder: (context, index) => _musicItemBuilder(
@@ -117,5 +121,5 @@ class TabChang extends BaseTab {
                     onItemTap,
                   ),
             ),
-      );
+          ));
 }

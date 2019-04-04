@@ -70,17 +70,19 @@ class _TextTileState extends State<TextTile> {
     List<Widget> contents = [];
     contents.add(Text(
       item.title,
-      style: Theme.of(context).textTheme.body1.apply(fontSizeFactor: 1.2),
+      style: Theme.of(context).textTheme.body1.copyWith(
+          letterSpacing: 1.1, fontSize: 18),
     ));
     if (item.isExpanded) {
       contents.add(SizedBox(height: 8));
       contents.add(
         Text(
           item.body,
-          style: Theme.of(context).textTheme.body1.apply(
-                fontSizeFactor: 1.1,
-                color: Colors.grey.shade600,
-              ),
+          style: Theme.of(context).textTheme.body1.copyWith(
+              letterSpacing: 1.02,
+              height: 1.05,
+              fontSize: 16,
+              color: Colors.grey.shade600),
         ),
       );
     }
@@ -146,9 +148,9 @@ class _ImageTileState extends State<ImageTile> {
               padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
               child: Text(
                 widget.item.title,
-                style: Theme.of(context).textTheme.caption.apply(
+                style: Theme.of(context).textTheme.caption.copyWith(
                       color: Colors.black,
-                      fontSizeFactor: widget.isTablet ? 1.3 : 1.0,
+                      fontSize: widget.isTablet ? 15 : 12,
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -200,22 +202,29 @@ class _MusicTileState extends State<MusicTile> {
         child: InkWell(
             onTap: () => _onTapped(context, widget.item),
             onLongPress: () {},
-            child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    _playControl(widget.item.status),
-                    SizedBox(width: 18),
-                    Expanded(
-                        child: Text(
-                      widget.item.title,
-                      style: Theme.of(context).textTheme.body1.apply(
-                            fontSizeFactor: 1.2,
-                          ),
-                    )),
-                  ],
-                ))),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  color: Colors.grey.shade300,
+                  height: 1,
+                ),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        _playControl(widget.item.status),
+                        SizedBox(width: 18),
+                        Expanded(
+                            child: Text(
+                              widget.item.title,
+                              style: Theme.of(context).textTheme.body1.copyWith(
+                                  letterSpacing: 1.1, fontSize: 18),
+                        )),
+                      ],
+                    ))
+              ],
+            )),
         margin: EdgeInsets.all(0),
       );
 
