@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       ActionOption(
         title: '源码',
         iconData: MdiIcons.githubCircle,
-        firstUrl: 'https://github.com/naco-siren/mogicians-manual',
+        firstUrl: 'https://github.com/naco-siren/mogicians-manual/tree/master/app',
       ),
       ActionOption(
         title: '反馈',
