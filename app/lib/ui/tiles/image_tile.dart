@@ -1,10 +1,7 @@
-import 'dart:typed_data';
-
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mogicians_manual/data/list_items.dart';
+import 'package:mogicians_manual/ui/image_viewer.dart';
+import 'package:mogicians_manual/utils/share_helper.dart';
 
 
 class ImageTile extends StatefulWidget {
@@ -29,8 +26,8 @@ class _ImageTileState extends State<ImageTile> {
         color: Colors.white,
         elevation: 2,
         child: InkWell(
-          onTap: () => _toastSharingInfo(),
-          onLongPress: () => _shareImage(),
+          onTap: () => _openImageViewer(),
+          onLongPress: () => shareImage(widget.item),
           child:
           Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Padding(
@@ -52,20 +49,10 @@ class _ImageTileState extends State<ImageTile> {
         margin: EdgeInsets.all(0),
       ));
 
-  void _toastSharingInfo() {
-    Fluttertoast.showToast(
-        msg: "长按图片来发送",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 1,
-        backgroundColor: Colors.grey.shade700.withOpacity(0.9),
-        textColor: Colors.white,
-        fontSize: 14.0);
-  }
-
-  void _shareImage() async {
-    final item = widget.item;
-    final ByteData bytes = await rootBundle.load(item.path);
-    await EsysFlutterShare.shareImage(item.src, bytes, '发送【${item.title}】');
+  void _openImageViewer() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder:
+            (context) => ImageViewer(widget.item)));
   }
 }

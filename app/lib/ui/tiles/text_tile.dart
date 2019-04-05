@@ -78,7 +78,7 @@ class _TextTileState extends State<TextTile> {
   }
 
   void _copyToClipboard(String title, String body) {
-    String content = '【$title】$body';
+    String content = '【$title】\n$body';
     ClipboardManager.copyToClipBoard(content).then((result) {
       Fluttertoast.showToast(
           msg: "已复制到剪贴板",
