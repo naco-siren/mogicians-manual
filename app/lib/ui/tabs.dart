@@ -4,7 +4,10 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'package:mogicians_manual/main.dart';
-import 'package:mogicians_manual/ui/list_tiles.dart';
+import 'package:mogicians_manual/ui/tiles/basic_tile.dart';
+import 'package:mogicians_manual/ui/tiles/text_tile.dart';
+import 'package:mogicians_manual/ui/tiles/image_tile.dart';
+import 'package:mogicians_manual/ui/tiles/music_tile.dart';
 import 'package:mogicians_manual/data/list_items.dart';
 import 'package:mogicians_manual/data/models.dart';
 
