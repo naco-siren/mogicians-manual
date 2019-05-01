@@ -281,6 +281,10 @@
                 "src": "dou_kaogei_6_xian_qi.gif"
             },
             {
+                "title": "吹拉弹唱",
+                "src": "dou_kaogei_7_chui_la_tan_chang.jpg"
+            },
+            {
                 "title": "阵营模板",
                 "src": "dou_kaogei_98_alignment.jpg"
             },
@@ -516,8 +520,16 @@
                 "src": "dou_kuso_24_zi_shi_shui_ping.jpg"
             },
             {
+                "title": "切 • 格瓦蛤",
+                "src": "dou_kuso_25_che_guevaha.jpg"
+            },
+            {
                 "title": "I WANT YOU",
                 "src": "dou_kuso_98_i_want_you.jpg"
+            },
+            {
+                "title": "最高指示",
+                "src": "dou_kuso_99_chairman_instruction.png"
             }
         ]
     },
@@ -618,48 +630,72 @@
                 "src": "dou_zhoubian_4_iphone_wallpaper.jpg"
             },
             {
+                "title": "鼠标垫",
+                "src": "dou_zhoubian_5_mouse_pad.jpg"
+            },
+            {
+                "title": "手机壳",
+                "src": "dou_zhoubian_6_iphone_case.jpg"
+            },
+            {
                 "title": "长者红包",
-                "src": "dou_zhoubian_5_hong_bao.jpg"
+                "src": "dou_zhoubian_7_hong_bao.jpg"
             },
             {
                 "title": "续命福",
-                "src": "dou_zhoubian_6_happiness.jpg"
+                "src": "dou_zhoubian_8_happiness.jpg"
             },
             {
                 "title": "金山打字通",
-                "src": "dou_zhoubian_7_jin_shan_da_zi_tong.jpg"
+                "src": "dou_zhoubian_9_jin_shan_da_zi_tong.jpg"
             },
             {
                 "title": "旅行青蛙",
-                "src": "dou_zhoubian_8_lv_xing_qing_wa.jpg"
+                "src": "dou_zhoubian_10_lv_xing_qing_wa.jpg"
             },
             {
                 "title": "赛艇改变了日历",
-                "src": "dou_zhoubian_9_calendar.png"
+                "src": "dou_zhoubian_11_calendar.png"
             },
             {
                 "title": "蛤丝牌",
-                "src": "dou_zhoubian_10_poker.jpg"
+                "src": "dou_zhoubian_12_poker.jpg"
             },
             {
                 "title": "蛤丝快乐币",
-                "src": "dou_zhoubian_11_cash.jpg"
+                "src": "dou_zhoubian_13_cash.jpg"
             },
             {
                 "title": "Excited Gundam",
-                "src": "dou_zhoubian_12_gundam.jpg"
+                "src": "dou_zhoubian_14_gundam.jpg"
             },
             {
                 "title": "Counter Strike",
-                "src": "dou_zhoubian_13_counter_strike.jpg"
+                "src": "dou_zhoubian_15_counter_strike.jpg"
             },
             {
                 "title": "香奈儿 2019",
-                "src": "dou_zhoubian_14_chanel_clock_2019.jpg"
+                "src": "dou_zhoubian_16_chanel_clock_2019.jpg"
             },
             {
                 "title": "可口可乐",
-                "src": "dou_zhoubian_15_coca_cola.jpg"
+                "src": "dou_zhoubian_17_coca_cola.jpg"
+            },
+            {
+                "title": "手提袋",
+                "src": "dou_zhoubian_18_handbag.jpg"
+            },
+            {
+                "title": "秘鲁青蛙汁",
+                "src": "dou_zhoubian_19_frog_juice.jpg"
+            },
+            {
+                "title": "科学实验柜",
+                "src": "dou_zhoubian_20_lab_shelf.jpg"
+            },
+            {
+                "title": "Александр Кабаков - Московские сказки",
+                "src": "dou_zhoubian_21_Александр_Кабаков.jpg"
             },
             {
                 "title": "MOGIC",
