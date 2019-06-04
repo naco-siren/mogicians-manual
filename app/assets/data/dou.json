@@ -409,6 +409,10 @@
             {
                 "title": "无可奉告",
                 "src": "dou_chengyu_16_wu_ke_feng_gao.gif"
+            },
+            {
+                "title": "膜蛤蟆德",
+                "src": "dou_chengyu_17_mohammod.jpg"
             }
         ]
     },
@@ -524,6 +528,14 @@
                 "src": "dou_kuso_25_che_guevaha.jpg"
             },
             {
+                "title": "虚假的中美辩论 • 其一",
+                "src": "dou_kuso_26_false_debate_1.jpg"
+            },
+            {
+                "title": "虚假的中美辩论 • 其二",
+                "src": "dou_kuso_26_false_debate_2.jpg"
+            },
+            {
                 "title": "I WANT YOU",
                 "src": "dou_kuso_98_i_want_you.jpg"
             },
@@ -605,6 +617,10 @@
                 "src": "dou_baozou_16_pei.jpg"
             },
             {
+                "title": "如何选择",
+                "src": "dou_baozou_17_ru_he_xuan_ze.jpg"
+            },
+            {
                 "title": "一派胡言",
                 "src": "dou_baozou_50_yi_pai_hu_yan.jpg"
             }
@@ -634,8 +650,20 @@
                 "src": "dou_zhoubian_5_mouse_pad.jpg"
             },
             {
-                "title": "手机壳",
-                "src": "dou_zhoubian_6_iphone_case.jpg"
+                "title": "手机壳 • 其一",
+                "src": "dou_zhoubian_6_iphone_case_1.jpg"
+            },
+            {
+                "title": "手机壳 • 其二",
+                "src": "dou_zhoubian_6_iphone_case_2.jpg"
+            },
+            {
+                "title": "手机壳 • 其三",
+                "src": "dou_zhoubian_6_iphone_case_3.jpg"
+            },
+            {
+                "title": "手机壳 • 其四",
+                "src": "dou_zhoubian_6_iphone_case_4.jpg"
             },
             {
                 "title": "长者红包",
@@ -698,8 +726,32 @@
                 "src": "dou_zhoubian_21_Александр_Кабаков.jpg"
             },
             {
+                "title": "蛤堡包",
+                "src": "dou_zhoubian_22_ha_burger.jpg"
+            },
+            {
+                "title": "网易云音乐",
+                "src": "dou_zhoubian_23_netease_music.jpg"
+            },
+            {
+                "title": "掌上理工大",
+                "src": "dou_zhoubian_24_zhang_shang_li_gong_da.jpg"
+            },
+            {
+                "title": "华莱士👓吼",
+                "src": "dou_zhoubian_25_tarsius_wallacei.jpg"
+            },
+            {
+                "title": "冰山",
+                "src": "dou_zhoubian_26_iceberg.jpg"
+            },
+            {
                 "title": "MOGIC",
                 "src": "dou_zhoubian_50_mogic.jpg"
+            },
+            {
+                "title": "娘化",
+                "src": "dou_zhoubian_99_moe.jpg"
             }
         ]
     }
