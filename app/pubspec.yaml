@@ -11,7 +11,7 @@ description: An open-source Flutter implementation of Mogician's Manual.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 6.3.0+60300
+version: 6.4.0+60400
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -19,15 +19,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  scoped_model: ^1.0.0
-  clipboard_manager: ^0.0.1
-  fluttertoast: ^3.0.3
-  flutter_staggered_grid_view: ^0.2.7
-  esys_flutter_share: ^0.0.9
-  audioplayers: ^0.10.1
+  scoped_model: ^1.0.1
+  clipboard_manager: ^0.0.4
+  fluttertoast: ^3.1.0
+  flutter_staggered_grid_view: ^0.3.0
+  esys_flutter_share: ^1.0.2
+  audioplayers: ^0.13.1
   material_design_icons_flutter: 3.2.3595
-  url_launcher: ^5.0.2
-  photo_view: ^0.2.2
+  url_launcher: ^5.0.5
+  photo_view: ^0.4.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
