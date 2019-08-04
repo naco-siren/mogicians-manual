@@ -565,10 +565,6 @@
                 "src": "dou_kuso_9_dou_gei_wo_yan_su_dian.jpg"
             },
             {
-                "title": "来啊渣渣",
-                "src": "dou_kuso_10_lai_a_zha_zha.jpg"
-            },
-            {
                 "title": "小龙女",
                 "src": "dou_kuso_11_xiao_long_nv.jpg"
             },
@@ -579,10 +575,6 @@
             {
                 "title": "+1 sec",
                 "src": "dou_kuso_13_jia_yi_miao.gif"
-            },
-            {
-                "title": "大 ♂ 新 ♂ 闻",
-                "src": "dou_kuso_14_da_xin_wen.jpg"
             },
             {
                 "title": "这就是蛤丝",
@@ -710,8 +702,12 @@
                 "src": "dou_baozou_18_ming_miao_mei.jpg"
             },
             {
+                "title": "没有达成共识",
+                "src": "dou_baozou_consensus_not_achieved.jpg"
+            },
+            {
                 "title": "🚫🤚🐸",
-                "src": "dou_baozou_19_jin_zhi_mo_ha.jpg"
+                "src": "dou_baozou_jin_zhi_mo_ha.jpg"
             },
             {
                 "title": "一派胡言",
@@ -723,8 +719,24 @@
         "title": "同人",
         "items": [
             {
-                "title": "金山打字通",
-                "src": "dou_doujin_jin_shan_da_zi_tong.jpg"
+                "title": "上海交通大学 - 官微",
+                "src": "dou_doujin_shang_hai_jiao_tong_da_xue_weibo.jpg"
+            },
+            {
+                "title": "上海交通大学 - 张文军",
+                "src": "dou_doujin_shang_hai_jiao_tong_da_xue_zhang_wen_jun.jpg"
+            },
+            {
+                "title": "武汉理工大学 - 掌上理工大",
+                "src": "dou_doujin_zhang_shang_li_gong_da.jpg"
+            },
+            {
+                "title": "网易云音乐",
+                "src": "dou_doujin_netease_music.jpg"
+            },
+            {
+                "title": "拥挤城市",
+                "src": "dou_doujin_crowd_city.jpg"
             },
             {
                 "title": "旅行青蛙",
@@ -737,6 +749,10 @@
             {
                 "title": "Counter Strike",
                 "src": "dou_doujin_counter_strike.jpg"
+            },
+            {
+                "title": "PUBG Mobile",
+                "src": "dou_doujin_pubg_mobile.jpg"
             },
             {
                 "title": "娘化 • 其一",
@@ -759,12 +775,20 @@
                 "src": "dou_doujin_kudo_shinichi.jpg"
             },
             {
+                "title": "星际牛仔",
+                "src": "dou_doujin_cowboy_bebop.jpg"
+            },
+            {
                 "title": "哆啦A梦 • 其一",
                 "src": "dou_doujin_doraemon_1.jpg"
             },
             {
                 "title": "哆啦A梦 • 其二",
                 "src": "dou_doujin_doraemon_2.jpg"
+            },
+            {
+                "title": "暴走大事件",
+                "src": "dou_doujin_bao_zou_da_shi_jian.jpg"
             },
             {
                 "title": "唐伯虎点秋香",
@@ -779,20 +803,16 @@
                 "src": "dou_doujin_tian_xia_di_yi.jpg"
             },
             {
+                "title": "Apex Legends",
+                "src": "dou_doujin_apex_legends.jpg"
+            },
+            {
                 "title": "在岗一分钟",
                 "src": "dou_zhoubian_1_min_59_sec.jpg"
             },
             {
-                "title": "网易云音乐",
-                "src": "dou_doujin_netease_music.jpg"
-            },
-            {
-                "title": "上海交通大学",
-                "src": "dou_doujin_shang_hai_jiao_tong_da_xue.jpg"
-            },
-            {
-                "title": "掌上理工大",
-                "src": "dou_doujin_zhang_shang_li_gong_da.jpg"
+                "title": "金山打字通",
+                "src": "dou_doujin_jin_shan_da_zi_tong.jpg"
             },
             {
                 "title": "墨墨背单词",
@@ -807,8 +827,8 @@
                 "src": "dou_doujin_jie_tu_neng_li_zhe.jpg"
             },
             {
-                "title": "Apex Legends",
-                "src": "dou_doujin_apex_legends.jpg"
+                "title": "环球日报 - 公众号",
+                "src": "dou_doujin_global_times.jpg"
             },
             {
                 "title": "革命之后",
@@ -900,6 +920,14 @@
                 "src": "dou_zhoubian_calendar.png"
             },
             {
+                "title": "肯德基",
+                "src": "dou_zhoubian_kfc.jpg"
+            },
+            {
+                "title": "吉野家",
+                "src": "dou_zhoubian_yoshinoya.jpg"
+            },
+            {
                 "title": "赛艇传媒杯",
                 "src": "dou_zhoubian_cup.jpg"
             },
@@ -920,16 +948,12 @@
                 "src": "dou_zhoubian_ha_burger.jpg"
             },
             {
-                "title": "蛤丝快乐桶",
-                "src": "dou_zhoubian_kfc.jpg"
-            },
-            {
                 "title": "蛤丝快乐饼",
                 "src": "dou_zhoubian_yue_bing.jpg"
             },
             {
-                "title": "蛤丝快乐石",
-                "src": "dou_zhoubian_shi_tou.jpg"
+                "title": "蛤丝快乐菜",
+                "src": "dou_zhoubian_mi_zhi_ha_si.jpg"
             },
             {
                 "title": "蛤丝快乐币",
@@ -942,6 +966,18 @@
             {
                 "title": "蛤丝快乐帽",
                 "src": "dou_zhoubian_mao_zi.jpg"
+            },
+            {
+                "title": "蛤丝快乐石",
+                "src": "dou_zhoubian_stone.jpg"
+            },
+            {
+                "title": "蛤丝快乐金",
+                "src": "dou_zhoubian_hf.jpg"
+            },
+            {
+                "title": "蛤丝快乐车",
+                "src": "dou_zhoubian_motorbike.jpg"
             },
             {
                 "title": "香港记者车",
@@ -972,6 +1008,10 @@
                 "src": "dou_zhoubian_jiang_xue_lu.jpg"
             },
             {
+                "title": "姜椰椰",
+                "src": "dou_zhoubian_jiang_ye_ye.jpg"
+            },
+            {
                 "title": "江沢医院",
                 "src": "dou_zhoubian_ezawa_hospital.jpg"
             },
@@ -994,6 +1034,10 @@
             {
                 "title": "蟶柱",
                 "src": "dou_zhoubian_sacred_pillar.jpg"
+            },
+            {
+                "title": "统统续了",
+                "src": "dou_zhoubian_all_be_toad.jpg"
             },
             {
                 "title": "Александр Кабаков - Московские сказки",
