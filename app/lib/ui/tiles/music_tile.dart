@@ -100,7 +100,6 @@ class _MusicTileState extends State<MusicTile> {
         msg: "试图$subject时发生错误",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 1,
         backgroundColor: Colors.grey.shade700.withOpacity(0.9),
         textColor: Colors.white,
         fontSize: 14.0);

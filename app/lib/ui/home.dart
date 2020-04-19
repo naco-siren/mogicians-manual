@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
     const options = <ActionOption>[
       ActionOption(
         title: '源码',
-        iconData: MdiIcons.githubCircle,
+        iconData: MdiIcons.github,
         firstUrl: 'https://github.com/naco-siren/mogicians-manual/tree/master/app/README.md',
       ),
       ActionOption(
@@ -121,7 +121,6 @@ class _HomePageState extends State<HomePage> {
           msg: 'Deep ♂ Dark ♂ Fantasy',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
           backgroundColor: Colors.grey.shade700.withOpacity(0.9),
           textColor: Colors.white,
           fontSize: 14.0);

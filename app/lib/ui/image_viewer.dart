@@ -40,7 +40,6 @@ class ImageViewer extends StatelessWidget {
         msg: "可在列表中长按图片来发送",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 1,
         backgroundColor: Colors.grey.shade700.withOpacity(0.9),
         textColor: Colors.white,
         fontSize: 14.0);

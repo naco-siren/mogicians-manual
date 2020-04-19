@@ -84,7 +84,6 @@ class _TextTileState extends State<TextTile> {
           msg: "已复制到剪贴板",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 1,
           backgroundColor: Colors.grey.shade700.withOpacity(0.9),
           textColor: Colors.white,
           fontSize: 14.0);
