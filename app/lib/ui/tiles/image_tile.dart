@@ -42,7 +42,7 @@ class _ImageTileState extends State<ImageTile> {
               ),
             ),
             FadeInImage(
-                placeholder: AssetImage('assets/images/dou_placeholder.jpg'),
+                placeholder: AssetImage(widget.item.path),
                 image: AssetImage(widget.item.path))
           ]),
         ),
