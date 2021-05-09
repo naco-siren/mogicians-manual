@@ -32,5 +32,5 @@ class MusicPlayer extends InheritedWidget {
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
   static MusicPlayer of(BuildContext context) =>
-      context.inheritFromWidgetOfExactType(MusicPlayer);
+      context.dependOnInheritedWidgetOfExactType<MusicPlayer>();
 }
