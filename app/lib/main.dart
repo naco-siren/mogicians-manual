@@ -4,7 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 
 import 'package:mogicians_manual/ui/home.dart';
 import 'package:mogicians_manual/service/music_player.dart';
-import 'package:mogicians_manual/service/brightness_controller.dart';
+import 'package:mogicians_manual/service/theme_provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,29 +15,22 @@ class MyApp extends StatefulWidget {
   State createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with MyThemeDataProvider {
   AudioPlayer audioPlayer = AudioPlayer();
-  BrightnessMode _brightnessMode = BrightnessMode.AUTO;
+  ThemeMode _themeMode = ThemeMode.system;
 
   @override
   Widget build(BuildContext context) {
-    // final Brightness brightnessValue = MediaQuery.of(context).platformBrightness;
-    // bool isDark = brightnessValue == Brightness.dark;
-
     return MaterialApp(
         title: title,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            primarySwatch: Colors.blue
-        ),
+        themeMode: _themeMode,
+        theme: getLightThemeData(),
+        darkTheme: getDarkThemeData(),
         home: MusicPlayer(
           child: HomePage(
             title: title,
-            brightnessMode: _brightnessMode,
-            onBrightnessModeChanged: _switchMode,
+            themeMode: _themeMode,
+            onThemeModeChanged: _switchMode,
           ),
           audioPlayer: audioPlayer,
         )
@@ -46,15 +39,15 @@ class _MyAppState extends State<MyApp> {
 
   _switchMode() {
     setState(() {
-      switch(_brightnessMode) {
-        case BrightnessMode.AUTO:
-          _brightnessMode = BrightnessMode.BRIGHT;
+      switch(_themeMode) {
+        case ThemeMode.system:
+          _themeMode = ThemeMode.light;
           break;
-        case BrightnessMode.BRIGHT:
-          _brightnessMode = BrightnessMode.DARK;
+        case ThemeMode.light:
+          _themeMode = ThemeMode.dark;
           break;
-        case BrightnessMode.DARK:
-          _brightnessMode = BrightnessMode.AUTO;
+        case ThemeMode.dark:
+          _themeMode = ThemeMode.system;
           break;
       }
     });
@@ -66,7 +59,6 @@ class _MyAppState extends State<MyApp> {
     audioPlayer.dispose();
   }
 }
-
 
 bool isTabletLayout(BuildContext context) =>
     MediaQuery.of(context).size.shortestSide >= 600;

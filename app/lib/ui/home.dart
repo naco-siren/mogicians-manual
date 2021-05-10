@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:mogicians_manual/ui/tabs.dart';
 import 'package:mogicians_manual/data/models.dart';
-import 'package:mogicians_manual/service/brightness_controller.dart';
+import 'package:mogicians_manual/service/theme_provider.dart';
+import 'package:mogicians_manual/service/toast_util.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({
     Key key,
     this.title,
-    @required this.brightnessMode,
-    @required this.onBrightnessModeChanged,
+    @required this.themeMode,
+    @required this.onThemeModeChanged,
   }) : super(key: key);
 
   final String title;
-  final BrightnessMode brightnessMode;
-  final VoidCallback onBrightnessModeChanged;
+  final ThemeMode themeMode;
+  final VoidCallback onThemeModeChanged;
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with ToastUtil {
   int _selectedIndex = 0;
 
   var _shuoModel = TabShuoModel();
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
         actions: _getAppbarActions(),
       ),
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Center(
         child: _getTab(),
       ),
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
     final options = <ActionOption>[
       ActionOption(
         title: '夜间模式',
-        iconData: BrightnessController.getBrightnessIcon(widget.brightnessMode),
+        iconData: MyThemeDataProvider.getBrightnessIcon(widget.themeMode),
       ),
       ActionOption(
         title: '源码',
@@ -104,11 +104,15 @@ class _HomePageState extends State<HomePage> {
     return <Widget>[
       IconButton(
         icon: Icon(options[0].iconData),
-        onPressed: widget.onBrightnessModeChanged,
+        onPressed: widget.onThemeModeChanged,
+      ),
+      IconButton(
+        icon: Icon(options[1].iconData),
+        onPressed: () => _launchUrl(options[1]),
       ),
       PopupMenuButton<ActionOption>(
         itemBuilder: (BuildContext context) =>
-          options.skip(1).map((ActionOption option) {
+          options.skip(2).map((ActionOption option) {
             return PopupMenuItem<ActionOption>(
               value: option,
               child: Text(option.title),
@@ -125,13 +129,7 @@ class _HomePageState extends State<HomePage> {
     } else if (option.secondUrl != null && await canLaunch(option.secondUrl)) {
       await launch(option.secondUrl);
     } else {
-      Fluttertoast.showToast(
-          msg: 'Deep ♂ Dark ♂ Fantasy',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.grey.shade700.withOpacity(0.9),
-          textColor: Colors.white,
-          fontSize: 14.0);
+      showToast(context, 'Deep ♂ Dark ♂ Fantasy');
     }
   }
 

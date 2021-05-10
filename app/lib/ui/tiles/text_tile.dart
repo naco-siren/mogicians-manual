@@ -1,7 +1,9 @@
-import 'package:clipboard_manager/clipboard_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
+import 'package:clipboard_manager/clipboard_manager.dart';
+
 import 'package:mogicians_manual/data/list_items.dart';
+import 'package:mogicians_manual/service/toast_util.dart';
 
 class TextTile extends StatefulWidget {
   TextTile(this.item);
@@ -12,13 +14,13 @@ class TextTile extends StatefulWidget {
   State createState() => _TextTileState();
 }
 
-class _TextTileState extends State<TextTile> {
+class _TextTileState extends State<TextTile> with ToastUtil {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
     return Card(
       shape: BeveledRectangleBorder(),
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       elevation: 2,
       child: InkWell(
           onTap: () {
@@ -28,7 +30,7 @@ class _TextTileState extends State<TextTile> {
           },
           onLongPress: () {
             if (item.isExpanded) {
-              _copyToClipboard(item.title, item.body);
+              _copyToClipboard(context, item.title, item.body);
             }
           },
           child: Column(
@@ -44,24 +46,34 @@ class _TextTileState extends State<TextTile> {
     List<Widget> contents = [];
     contents.add(Text(
       item.title,
-      style: Theme.of(context).textTheme.body1.copyWith(
-          letterSpacing: 1.1, fontSize: 18),
+      style: Theme.of(context).textTheme.bodyText2.copyWith(
+          color: Theme.of(context).colorScheme.primary,
+          letterSpacing: 1.1,
+          fontSize: 18
+      ),
     ));
     if (item.isExpanded) {
       contents.add(SizedBox(height: 8));
       contents.add(
         Text(
           item.body,
-          style: Theme.of(context).textTheme.body1.copyWith(
+          style: Theme.of(context).textTheme.bodyText2.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
               letterSpacing: 1.02,
               height: 1.05,
               fontSize: 16,
-              color: Colors.grey.shade600),
+          ),
         ),
       );
     }
 
     List<Widget> children = [];
+
+    children.add(Container(
+      color: Theme.of(context).dialogBackgroundColor,
+      height: 1,
+    ));
+
     children.add(Container(
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       child: Column(
@@ -69,24 +81,14 @@ class _TextTileState extends State<TextTile> {
         children: contents,
       ),
     ));
-    children.add(Container(
-      color: Colors.grey.shade300,
-      height: 1,
-    ));
 
     return children;
   }
 
-  void _copyToClipboard(String title, String body) {
+  void _copyToClipboard(BuildContext context, String title, String body) {
     String content = '【$title】\n$body';
     ClipboardManager.copyToClipBoard(content).then((result) {
-      Fluttertoast.showToast(
-          msg: "已复制到剪贴板",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.grey.shade700.withOpacity(0.9),
-          textColor: Colors.white,
-          fontSize: 14.0);
+      showToast(context, "已复制到剪贴板");
     });
   }
 }

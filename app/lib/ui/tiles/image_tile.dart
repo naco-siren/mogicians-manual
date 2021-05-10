@@ -23,7 +23,7 @@ class _ImageTileState extends State<ImageTile> {
       padding: EdgeInsets.all(widget.isTablet ? paddingTablet : paddingPhone),
       child: Card(
         shape: BeveledRectangleBorder(),
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         elevation: 2,
         child: InkWell(
           onTap: () => _openImageViewer(),
@@ -35,7 +35,7 @@ class _ImageTileState extends State<ImageTile> {
               child: Text(
                 widget.item.title,
                 style: Theme.of(context).textTheme.caption.copyWith(
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: widget.isTablet ? 15 : 12,
                 ),
                 textAlign: TextAlign.center,
