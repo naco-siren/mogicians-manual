@@ -7,11 +7,19 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:mogicians_manual/ui/tabs.dart';
 import 'package:mogicians_manual/data/models.dart';
+import 'package:mogicians_manual/service/brightness_controller.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({
+    Key key,
+    this.title,
+    @required this.brightnessMode,
+    @required this.onBrightnessModeChanged,
+  }) : super(key: key);
 
   final String title;
+  final BrightnessMode brightnessMode;
+  final VoidCallback onBrightnessModeChanged;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -69,11 +77,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> _getAppbarActions() {
-    const options = <ActionOption>[
+    final options = <ActionOption>[
+      ActionOption(
+        title: '夜间模式',
+        iconData: BrightnessController.getBrightnessIcon(widget.brightnessMode),
+      ),
       ActionOption(
         title: '源码',
         iconData: MdiIcons.github,
-        firstUrl: 'https://github.com/naco-siren/mogicians-manual/tree/master/app/README.md',
+        firstUrl:
+            'https://github.com/naco-siren/mogicians-manual/tree/master/app/README.md',
       ),
       ActionOption(
         title: '反馈',
@@ -91,22 +104,17 @@ class _HomePageState extends State<HomePage> {
     return <Widget>[
       IconButton(
         icon: Icon(options[0].iconData),
-        onPressed: () => _launchUrl(options[0]),
-      ),
-      IconButton(
-        icon: Icon(options[1].iconData),
-        onPressed: () => _launchUrl(options[1]),
+        onPressed: widget.onBrightnessModeChanged,
       ),
       PopupMenuButton<ActionOption>(
-        onSelected: (option) => _launchUrl(option),
-        itemBuilder: (BuildContext context) {
-          return options.skip(2).map((ActionOption option) {
+        itemBuilder: (BuildContext context) =>
+          options.skip(1).map((ActionOption option) {
             return PopupMenuItem<ActionOption>(
               value: option,
               child: Text(option.title),
             );
-          }).toList();
-        },
+          }).toList(),
+        onSelected: (option) => _launchUrl(option),
       ),
     ];
   }
@@ -130,10 +138,14 @@ class _HomePageState extends State<HomePage> {
   Widget _getBottomNav() => BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(title: Text('【说】'), icon: Icon(Icons.mic)),
-          BottomNavigationBarItem(title: Text('【学】'), icon: Icon(Icons.local_library)),
-          BottomNavigationBarItem(title: Text('【逗】'), icon: Icon(Icons.sentiment_very_satisfied)),
-          BottomNavigationBarItem(title: Text('【唱】'), icon: Icon(Icons.music_note)),
+          BottomNavigationBarItem(
+              label: '【说】', icon: Icon(Icons.mic)),
+          BottomNavigationBarItem(
+              label: '【学】', icon: Icon(Icons.local_library)),
+          BottomNavigationBarItem(
+              label: '【逗】', icon: Icon(Icons.sentiment_very_satisfied)),
+          BottomNavigationBarItem(
+              label: '【唱】', icon: Icon(Icons.music_note)),
         ],
         currentIndex: _selectedIndex,
         onTap: _selectTabItem,
