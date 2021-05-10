@@ -4,23 +4,23 @@
     "items": [
       {
         "title": "蛤国地狱",
-        "src": "chang_classic_0_ha_guo_di_yu.mp3"
+        "src": "chang_classic_0_ha_guo_di_yu.aac"
       },
       {
         "title": "重庆上海狂想曲",
-        "src": "chang_classic_1_chong_qing_shang_hai_kuang_xiang_qu.mp3"
+        "src": "chang_classic_1_chong_qing_shang_hai_kuang_xiang_qu.aac"
       },
       {
         "title": "自蛤大陆",
-        "src": "chang_classic_2_zi_ha_da_lu.mp3"
+        "src": "chang_classic_2_zi_ha_da_lu.aac"
       },
       {
         "title": "Jingle Hath",
-        "src": "chang_classic_3_jingle_hath.mp3"
+        "src": "chang_classic_3_jingle_hath.aac"
       },
       {
         "title": "HAHAdio",
-        "src": "chang_classic_4_hahadio.mp3"
+        "src": "chang_classic_4_hahadio.aac"
       }
     ]
   },
@@ -29,47 +29,47 @@
     "items": [
       {
         "title": "Sometimes Naïve",
-        "src": "chang_pop_0_sometimes_naive.mp3"
+        "src": "chang_pop_0_sometimes_naive.aac"
       },
       {
         "title": "Too Simple",
-        "src": "chang_pop_1_too_simple.mp3"
+        "src": "chang_pop_1_too_simple.aac"
       },
       {
         "title": "督苹果",
-        "src": "chang_pop_2_du_ping_guo.mp3"
+        "src": "chang_pop_2_du_ping_guo.aac"
       },
       {
         "title": "江蛤 Style",
-        "src": "chang_pop_3_jiang_ha_style.mp3"
+        "src": "chang_pop_3_jiang_ha_style.aac"
       },
       {
         "title": "蛤nity",
-        "src": "chang_pop_4_hanity.mp3"
+        "src": "chang_pop_4_hanity.aac"
       },
       {
         "title": "Gentle蛤 • 其一",
-        "src": "chang_pop_5_gentle_ha_1.mp3"
+        "src": "chang_pop_5_gentle_ha_1.aac"
       },
       {
         "title": "Gentle蛤 • 其二",
-        "src": "chang_pop_6_gentle_ha_2.mp3"
+        "src": "chang_pop_6_gentle_ha_2.aac"
       },
       {
         "title": "蛤苹果",
-        "src": "chang_pop_7_ha_ping_guo.mp3"
+        "src": "chang_pop_7_ha_ping_guo.aac"
       },
       {
         "title": "膜蛤之路",
-        "src": "chang_pop_8_mo_ha_zhi_lu.mp3"
+        "src": "chang_pop_8_mo_ha_zhi_lu.aac"
       },
       {
         "title": "HHAH",
-        "src": "chang_pop_9_hhah.mp3"
+        "src": "chang_pop_9_hhah.aac"
       },
       {
         "title": "蛤王之王",
-        "src": "chang_pop_10_ha_wang_zhi_wang.mp3"
+        "src": "chang_pop_10_ha_wang_zhi_wang.aac"
       }
     ]
   },
@@ -78,35 +78,35 @@
     "items": [
       {
         "title": "蛤蛤素描",
-        "src": "chang_anime_0_ha_ha_su_miao.mp3"
+        "src": "chang_anime_0_ha_ha_su_miao.aac"
       },
       {
         "title": "重庆热",
-        "src": "chang_anime_1_chong_qing_re.mp3"
+        "src": "chang_anime_1_chong_qing_re.aac"
       },
       {
         "title": "Brave 蛤t",
-        "src": "chang_anime_2_brave_ha_te.mp3"
+        "src": "chang_anime_2_brave_ha_te.aac"
       },
       {
         "title": "大头都督小头蛤蛤",
-        "src": "chang_anime_3_da_tou_du_du_xiao_tou_ha_ha.mp3"
+        "src": "chang_anime_3_da_tou_du_du_xiao_tou_ha_ha.aac"
       },
       {
         "title": "残酷蛤蛤的行动纲领",
-        "src": "chang_anime_4_can_ku_ha_ha_de_xing_dong_gang_ling.mp3"
+        "src": "chang_anime_4_can_ku_ha_ha_de_xing_dong_gang_ling.aac"
       },
       {
         "title": "威风蛤蛤",
-        "src": "chang_anime_5_wei_feng_ha_ha.mp3"
+        "src": "chang_anime_5_wei_feng_ha_ha.aac"
       },
       {
         "title": "千本蛤",
-        "src": "chang_anime_6_qian_ben_ha.mp3"
+        "src": "chang_anime_6_qian_ben_ha.aac"
       },
       {
         "title": "白金蛤督",
-        "src": "chang_anime_7_bai_jin_ha_du.mp3"
+        "src": "chang_anime_7_bai_jin_ha_du.aac"
       }
     ]
   },
@@ -115,19 +115,19 @@
     "items": [
       {
         "title": "蛤蛤 Zone",
-        "src": "chang_kitiku_0_ha_ha_zone.mp3"
+        "src": "chang_kitiku_0_ha_ha_zone.aac"
       },
       {
         "title": "长者的消失",
-        "src": "chang_kitiku_1_zhang_zhe_de_xiao_shi.mp3"
+        "src": "chang_kitiku_1_zhang_zhe_de_xiao_shi.aac"
       },
       {
         "title": "蛤反射 • 其一",
-        "src": "chang_kitiku_2_ha_fan_she_1.mp3"
+        "src": "chang_kitiku_2_ha_fan_she_1.aac"
       },
       {
         "title": "蛤反射 • 其二",
-        "src": "chang_kitiku_3_ha_fan_she_2.mp3"
+        "src": "chang_kitiku_3_ha_fan_she_2.aac"
       }
     ]
   }
