@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
+  AudioPlayer audioPlayer = AudioPlayer();
   BrightnessMode _brightnessMode = BrightnessMode.AUTO;
 
   @override
@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
             brightnessMode: _brightnessMode,
             onBrightnessModeChanged: _switchMode,
           ),
-          audioPlayer: new AudioPlayer(),
+          audioPlayer: audioPlayer,
         )
     );
   }
@@ -58,6 +58,12 @@ class _MyAppState extends State<MyApp> {
           break;
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    audioPlayer.dispose();
   }
 }
 

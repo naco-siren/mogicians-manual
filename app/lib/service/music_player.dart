@@ -17,7 +17,7 @@ class MusicPlayer extends InheritedWidget {
   Future<int> resume({MusicItem item}) async {
     if (item != null) {
       final file =
-          new File('${(await getTemporaryDirectory()).path}/${item.src}');
+          File('${(await getTemporaryDirectory()).path}/${item.src}');
       await file.writeAsBytes(
           (await rootBundle.load(item.path)).buffer.asUint8List());
       await audioPlayer.setUrl(file.path);
