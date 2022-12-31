@@ -130,13 +130,17 @@ class _HomePageState extends State<HomePage> with ToastUtil {
   }
 
   _launchUrl(ActionOption option) async {
-    if (await canLaunch(option.firstUrl)) {
-      await launch(option.firstUrl);
-    } else if (option.secondUrl != null && await canLaunch(option.secondUrl)) {
-      await launch(option.secondUrl);
-    } else {
-      showToast(context, 'Deep ♂ Dark ♂ Fantasy');
+    final firstUri = Uri.parse(option.firstUrl);
+    if (await canLaunchUrl(firstUri)) {
+      return await launchUrl(firstUri);
     }
+
+    final secondUri = Uri.parse(option.secondUrl);
+    if (secondUri != null && await canLaunchUrl(secondUri)) {
+      return await launchUrl(secondUri);
+    }
+
+    showToast(context, 'Deep ♂ Dark ♂ Fantasy');
   }
 
   Widget _getBottomNav() => BottomNavigationBar(
