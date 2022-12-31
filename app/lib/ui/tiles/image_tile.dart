@@ -35,7 +35,7 @@ class _ImageTileState extends State<ImageTile> {
               child: Text(
                 widget.item.title,
                 style: Theme.of(context).textTheme.caption.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: widget.isTablet ? 15 : 12,
                 ),
                 textAlign: TextAlign.center,

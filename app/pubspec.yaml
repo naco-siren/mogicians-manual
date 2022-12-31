@@ -22,7 +22,7 @@ dependencies:
   scoped_model: 2.0.0
   clipboard_manager: 0.0.4
   fluttertoast: 8.1.2
-  flutter_staggered_grid_view: 0.6.2
+  flutter_staggered_grid_view: 0.4.0
   esys_flutter_share: 1.0.2
   audioplayers: ^0.15.1
   material_design_icons_flutter: 6.0.7096
