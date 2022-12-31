@@ -6,9 +6,10 @@ import 'package:mogicians_manual/data/list_items.dart';
 import 'package:mogicians_manual/service/toast_util.dart';
 
 class TextTile extends StatefulWidget {
-  TextTile(this.item);
+  TextTile(this.item, this.isNovember);
 
   final TextItem item;
+  final bool isNovember;
 
   @override
   State createState() => _TextTileState();
@@ -87,8 +88,10 @@ class _TextTileState extends State<TextTile> with ToastUtil {
 
   void _copyToClipboard(BuildContext context, String title, String body) {
     String content = '【$title】\n$body';
+    String message = "已复制到剪贴板";
+    if (widget.isNovember) message += "。阿门……";
     ClipboardManager.copyToClipBoard(content).then((result) {
-      showToast(context, "已复制到剪贴板");
+      showToast(context, message);
     });
   }
 }

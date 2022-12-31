@@ -14,6 +14,11 @@ import 'package:mogicians_manual/data/models.dart';
 typedef MusicItemTapCallback = void Function(int);
 
 abstract class BaseTab extends StatelessWidget {
+
+  BaseTab(this.isNovember);
+
+  final bool isNovember;
+
   final int colSizeTablet = 5;
   final int colSizePhone = 3;
 
@@ -29,7 +34,7 @@ abstract class BaseTab extends StatelessWidget {
 
   Widget _textItemBuilder(ListItem item) {
     if (item is TextItem) {
-      return TextTile(item);
+      return TextTile(item, isNovember);
     } else {
       return _itemBuilder(item);
     }
@@ -37,7 +42,7 @@ abstract class BaseTab extends StatelessWidget {
 
   Widget _imageItemBuilder(ListItem item, bool isTablet) {
     if (item is ImageItem) {
-      return ImageTile(item, isTablet);
+      return ImageTile(item, isTablet, isNovember);
     } else {
       return _itemBuilder(item);
     }
@@ -45,7 +50,7 @@ abstract class BaseTab extends StatelessWidget {
 
   Widget _musicItemBuilder(ListItem item, int index, ItemTapCallback callback) {
     if (item is MusicItem) {
-      return MusicTile(item, index, callback);
+      return MusicTile(item, index, callback, isNovember);
     } else {
       return _itemBuilder(item);
     }
@@ -53,6 +58,8 @@ abstract class BaseTab extends StatelessWidget {
 }
 
 class TabShuo extends BaseTab {
+  TabShuo(bool isNovember) : super(isNovember);
+
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabShuoModel>(
       builder: (context, child, model) => Scrollbar(
@@ -66,6 +73,8 @@ class TabShuo extends BaseTab {
 }
 
 class TabXue extends BaseTab {
+  TabXue(bool isNovember) : super(isNovember);
+
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabXueModel>(
       builder: (context, child, model) => Scrollbar(
@@ -79,6 +88,8 @@ class TabXue extends BaseTab {
 }
 
 class TabDou extends BaseTab {
+  TabDou(bool isNovember) : super(isNovember);
+
   @override
   Widget build(BuildContext context) {
     final isTablet = isTabletLayout(context);
@@ -108,9 +119,9 @@ class TabDou extends BaseTab {
 }
 
 class TabChang extends BaseTab {
-  final MusicItemTapCallback onItemTap;
+  TabChang(bool isNovember, this.onItemTap) : super(isNovember);
 
-  TabChang(this.onItemTap);
+  final MusicItemTapCallback onItemTap;
 
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabChangModel>(
@@ -119,10 +130,10 @@ class TabChang extends BaseTab {
               key: PageStorageKey<String>("tab_chang"),
               itemCount: model.items.length,
               itemBuilder: (context, index) => _musicItemBuilder(
-                    model.items[index],
-                    index,
-                    onItemTap,
-                  ),
+                model.items[index],
+                index,
+                onItemTap,
+              ),
             ),
           ));
 }

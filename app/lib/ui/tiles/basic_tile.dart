@@ -12,9 +12,12 @@ class HeaderTile extends StatelessWidget {
       child: Text(
         _item.heading,
         style: Theme.of(context).textTheme.titleMedium.apply(
-          color: Colors.yellowAccent.shade700,
-          fontWeightDelta: 1,
-        ),
+              color: HSLColor.fromColor(Theme.of(context).colorScheme.secondary)
+                  .withLightness(0.6)
+                  .withSaturation(0.9)
+                  .toColor(),
+              fontWeightDelta: 2,
+            ),
       ));
 }
 

@@ -9,6 +9,7 @@ import 'package:mogicians_manual/service/theme_provider.dart';
 void main() => runApp(MyApp());
 
 const String title = '膜法指南';
+const int _monthDeceased = 11;
 
 class MyApp extends StatefulWidget {
   @override
@@ -21,14 +22,17 @@ class _MyAppState extends State<MyApp> with MyThemeDataProvider {
 
   @override
   Widget build(BuildContext context) {
+    final isNovember = DateTime.now().month == _monthDeceased;
+
     return MaterialApp(
         title: title,
         themeMode: _themeMode,
-        theme: getLightThemeData(),
-        darkTheme: getDarkThemeData(),
+        theme: isNovember ? getFuneralThemeData() : getLightThemeData(),
+        darkTheme: isNovember ? getFuneralThemeData() : getDarkThemeData(),
         home: MusicPlayer(
           child: HomePage(
             title: title,
+            isNovember: isNovember,
             themeMode: _themeMode,
             onThemeModeChanged: _switchMode,
           ),

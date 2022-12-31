@@ -6,13 +6,13 @@ import 'package:mogicians_manual/service/toast_util.dart';
 
 typedef ItemTapCallback = void Function(int);
 
-
 class MusicTile extends StatefulWidget {
-  MusicTile(this.item, this.index, this.callback);
+  MusicTile(this.item, this.index, this.callback, this.disabled);
 
   final MusicItem item;
   final int index;
   final ItemTapCallback callback;
+  final bool disabled;
 
   @override
   State createState() => _MusicTileState();
@@ -21,38 +21,47 @@ class MusicTile extends StatefulWidget {
 class _MusicTileState extends State<MusicTile> with ToastUtil {
   @override
   Widget build(BuildContext context) => Card(
-    key: ObjectKey(widget.item),
-    shape: BeveledRectangleBorder(),
-    color: Theme.of(context).cardColor,
-    elevation: 2,
-    child: InkWell(
-        onTap: () => _onTapped(context, widget.item),
-        onLongPress: () {},
-        child: Column(
-          children: <Widget>[
-            Container(
-              color: Theme.of(context).dialogBackgroundColor,
-              height: 1,
-            ),
-            Padding(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    _playControl(context, widget.item.status),
-                    SizedBox(width: 18),
-                    Expanded(
-                        child: Text(
+        key: ObjectKey(widget.item),
+        shape: BeveledRectangleBorder(),
+        color: Theme.of(context).cardColor,
+        elevation: 2,
+        child: InkWell(
+            onTap: () => {
+              if (!widget.disabled) { _onTapped(context, widget.item) }
+            },
+            onLongPress: () {},
+            child: Column(
+              children: <Widget>[
+                Container(
+                  color: Theme.of(context).dialogBackgroundColor,
+                  height: 1,
+                ),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        widget.disabled
+                            ? _disabledControl(context)
+                            : _playControl(context, widget.item.status),
+                        SizedBox(width: 18),
+                        Expanded(
+                            child: Text(
                           widget.item.title,
-                          style: Theme.of(context).textTheme.bodyText2.copyWith(
-                              letterSpacing: 1.1, fontSize: 18),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2
+                              .copyWith(letterSpacing: 1.1, fontSize: 18),
                         )),
-                  ],
-                ))
-          ],
-        )),
-    margin: EdgeInsets.all(0),
-  );
+                      ],
+                    ))
+              ],
+            )),
+        margin: EdgeInsets.all(0),
+      );
+
+  Widget _disabledControl(BuildContext context) => Icon(Icons.block,
+      size: 30, color: Theme.of(context).unselectedWidgetColor);
 
   Widget _playControl(BuildContext context, AudioStatus status) {
     switch (status) {
@@ -101,4 +110,3 @@ class _MusicTileState extends State<MusicTile> with ToastUtil {
     showToast(context, "试图$subject时发生错误");
   }
 }
-

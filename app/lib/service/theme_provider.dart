@@ -4,8 +4,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 class MyThemeDataProvider {
 
-  ThemeData getLightThemeData() {
-    return ThemeData.from(
+  ThemeData getLightThemeData() =>
+    ThemeData.from(
       colorScheme: ColorScheme.fromSwatch(
         primarySwatch: Colors.blue,
         accentColor: Colors.yellow,
@@ -22,7 +22,6 @@ class MyThemeDataProvider {
       hoverColor: Colors.grey.shade700.withOpacity(0.9),
       toggleableActiveColor: Colors.grey.shade700,
     );
-  }
 
   ThemeData getDarkThemeData() {
     final defaultDarkTheme = ThemeData.dark();
@@ -34,6 +33,26 @@ class MyThemeDataProvider {
         ),
         unselectedWidgetColor: Colors.grey.shade500,
         toggleableActiveColor: Colors.grey.shade300
+    );
+  }
+
+  ThemeData getFuneralThemeData() {
+    return ThemeData.from(
+      colorScheme: ColorScheme.fromSwatch(
+        primarySwatch: Colors.blueGrey,
+        accentColor: Colors.black,
+        backgroundColor: Colors.grey.shade200,
+      ).copyWith(
+        onSurface: Colors.grey.shade900,
+        onBackground: Colors.grey.shade600,
+      ),
+    ).copyWith(
+      dialogBackgroundColor: Colors.grey.shade300,
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.white
+      ),
+      hoverColor: Colors.grey.shade700.withOpacity(0.9),
+      toggleableActiveColor: Colors.grey.shade700,
     );
   }
 

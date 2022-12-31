@@ -10,16 +10,18 @@ import 'package:mogicians_manual/service/theme_provider.dart';
 import 'package:mogicians_manual/service/toast_util.dart';
 
 class HomePage extends StatefulWidget {
+  final String title;
+  final bool isNovember;
+  final ThemeMode themeMode;
+  final VoidCallback onThemeModeChanged;
+
   HomePage({
     Key key,
+    this.isNovember,
     this.title,
     @required this.themeMode,
     @required this.onThemeModeChanged,
   }) : super(key: key);
-
-  final String title;
-  final ThemeMode themeMode;
-  final VoidCallback onThemeModeChanged;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -37,7 +39,7 @@ class _HomePageState extends State<HomePage> with ToastUtil {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(MdiIcons.guyFawkesMask),
+        leading: Icon(widget.isNovember ? MdiIcons.candle : MdiIcons.glasses),
         title: Text(widget.title),
         actions: _getAppbarActions(),
       ),
@@ -54,22 +56,22 @@ class _HomePageState extends State<HomePage> with ToastUtil {
       case 0:
         return ScopedModel<TabShuoModel>(
           model: _shuoModel,
-          child: TabShuo(),
+          child: TabShuo(widget.isNovember),
         );
       case 1:
         return ScopedModel<TabXueModel>(
           model: _xueModel,
-          child: TabXue(),
+          child: TabXue(widget.isNovember),
         );
       case 2:
         return ScopedModel<TabDouModel>(
           model: _douModel,
-          child: TabDou(),
+          child: TabDou(widget.isNovember),
         );
       case 3:
         return ScopedModel<TabChangModel>(
           model: _changModel,
-          child: TabChang(_selectMusicItem),
+          child: TabChang(widget.isNovember, _selectMusicItem),
         );
       default:
         throw Exception('Invalid index!');
@@ -78,10 +80,7 @@ class _HomePageState extends State<HomePage> with ToastUtil {
 
   List<Widget> _getAppbarActions() {
     final options = <ActionOption>[
-      ActionOption(
-        title: '夜间模式',
-        iconData: MyThemeDataProvider.getBrightnessIcon(widget.themeMode),
-      ),
+
       ActionOption(
         title: '源码',
         iconData: MdiIcons.github,
@@ -100,6 +99,13 @@ class _HomePageState extends State<HomePage> with ToastUtil {
         secondUrl: 'https://www.zhihu.com/people/naco_siren',
       ),
     ];
+
+    if (!widget.isNovember) {
+      options.insert(0, ActionOption(
+        title: '夜间模式',
+        iconData: MyThemeDataProvider.getBrightnessIcon(widget.themeMode),
+      ));
+    }
 
     return <Widget>[
       IconButton(
@@ -161,11 +167,11 @@ class _HomePageState extends State<HomePage> with ToastUtil {
 }
 
 class ActionOption {
-  const ActionOption(
-      {this.title, this.iconData, this.firstUrl, this.secondUrl});
-
   final String title;
   final IconData iconData;
   final String firstUrl;
   final String secondUrl;
+
+  const ActionOption(
+      {this.title, this.iconData, this.firstUrl, this.secondUrl});
 }
