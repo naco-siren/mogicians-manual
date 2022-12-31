@@ -57,7 +57,8 @@ class _MusicTileState extends State<MusicTile> with ToastUtil {
   Widget _playControl(BuildContext context, AudioStatus status) {
     switch (status) {
       case AudioStatus.STOPPED:
-        return Icon(Icons.play_arrow, size: 30, color: Theme.of(context).buttonColor);
+        return Icon(Icons.play_arrow,
+            size: 30, color: Theme.of(context).unselectedWidgetColor);
       case AudioStatus.RESUMED:
         return Icon(Icons.pause_circle_filled,
             size: 30, color: Theme.of(context).toggleableActiveColor);

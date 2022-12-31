@@ -5,37 +5,35 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 class MyThemeDataProvider {
 
   ThemeData getLightThemeData() {
-    // return ThemeData.light();
-    return ThemeData(
-      brightness: Brightness.light,
-      primarySwatch: Colors.blue,
-      backgroundColor: Colors.grey.shade200,
-      accentColorBrightness: Brightness.light,
-      dialogBackgroundColor: Colors.grey.shade300,
-      colorScheme: ColorScheme.light().copyWith(
-        primary: Colors.grey.shade900,
-        secondary: Colors.grey.shade600,
+    return ThemeData.from(
+      colorScheme: ColorScheme.fromSwatch(
+        primarySwatch: Colors.blue,
+        accentColor: Colors.yellow,
+        backgroundColor: Colors.grey.shade200,
+      ).copyWith(
+        onSurface: Colors.grey.shade900,
+        onBackground: Colors.grey.shade600,
       ),
-      buttonColor: Colors.grey.shade400,
-      toggleableActiveColor: Colors.grey.shade700,
+    ).copyWith(
+      dialogBackgroundColor: Colors.grey.shade300,
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.white
+      ),
       hoverColor: Colors.grey.shade700.withOpacity(0.9),
+      toggleableActiveColor: Colors.grey.shade700,
     );
   }
 
   ThemeData getDarkThemeData() {
-    // return ThemeData.dark();
-    return ThemeData(
-      brightness: Brightness.dark,
-      primarySwatch: Colors.blue,
-      accentColorBrightness: Brightness.dark,
-      dialogBackgroundColor: Colors.grey.shade700,
-      colorScheme: ColorScheme.dark().copyWith(
-        primary: Colors.grey.shade400,
-        secondary: Colors.grey.shade500,
-      ),
-      buttonColor: Colors.grey.shade500,
-      toggleableActiveColor: Colors.grey.shade300,
-      hoverColor: Colors.grey.shade300.withOpacity(0.9),
+    final defaultDarkTheme = ThemeData.dark();
+    final defaultDarkColorScheme = defaultDarkTheme.colorScheme;
+    return defaultDarkTheme.copyWith(
+        colorScheme: defaultDarkColorScheme.copyWith(
+          onSurface: Colors.grey.shade100,
+          onBackground: Colors.grey.shade400,
+        ),
+        unselectedWidgetColor: Colors.grey.shade500,
+        toggleableActiveColor: Colors.grey.shade300
     );
   }
 

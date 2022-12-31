@@ -47,7 +47,7 @@ class _TextTileState extends State<TextTile> with ToastUtil {
     contents.add(Text(
       item.title,
       style: Theme.of(context).textTheme.bodyText2.copyWith(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onSurface,
           letterSpacing: 1.1,
           fontSize: 18
       ),
@@ -58,7 +58,7 @@ class _TextTileState extends State<TextTile> with ToastUtil {
         Text(
           item.body,
           style: Theme.of(context).textTheme.bodyText2.copyWith(
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.onBackground,
               letterSpacing: 1.02,
               height: 1.05,
               fontSize: 16,

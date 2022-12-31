@@ -11,7 +11,7 @@ class HeaderTile extends StatelessWidget {
       padding: EdgeInsets.only(left: 18, top: 20, bottom: 8),
       child: Text(
         _item.heading,
-        style: Theme.of(context).textTheme.title.apply(
+        style: Theme.of(context).textTheme.titleMedium.apply(
           color: Colors.yellowAccent.shade700,
           fontWeightDelta: 1,
         ),
