@@ -72,3 +72,10 @@ class TabChangModel extends TabModel {
     notifyListeners();
   }
 }
+
+class TabGenModel extends TabModel {
+  String _dataJsonFilename = "gen";
+  Future<List<ListItem>> Function(String) _parseItemFunction = parseDocumentItems;
+
+  TabGenModel() : super();
+}
