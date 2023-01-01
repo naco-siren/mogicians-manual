@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> with ToastUtil {
   var _xueModel = TabXueModel();
   var _douModel = TabDouModel();
   var _changModel = TabChangModel();
+  var _genModel = TabGenModel();
 
   @override
   Widget build(BuildContext context) {
@@ -52,26 +53,32 @@ class _HomePageState extends State<HomePage> with ToastUtil {
   }
 
   Widget _getTab() {
+    final isNov = widget.isNovember;
     switch (_selectedIndex) {
       case 0:
         return ScopedModel<TabShuoModel>(
           model: _shuoModel,
-          child: TabShuo(widget.isNovember),
+          child: TabShuo(isNov),
         );
       case 1:
         return ScopedModel<TabXueModel>(
           model: _xueModel,
-          child: TabXue(widget.isNovember),
+          child: TabXue(isNov),
         );
       case 2:
         return ScopedModel<TabDouModel>(
           model: _douModel,
-          child: TabDou(widget.isNovember),
+          child: TabDou(isNov),
         );
       case 3:
         return ScopedModel<TabChangModel>(
           model: _changModel,
-          child: TabChang(widget.isNovember, _selectMusicItem),
+          child: TabChang(isNov, _selectMusicItem),
+        );
+      case 4:
+        return ScopedModel<TabGenModel>(
+          model: _genModel,
+          child: TabGen(isNov),
         );
       default:
         throw Exception('Invalid index!');
@@ -94,7 +101,7 @@ class _HomePageState extends State<HomePage> with ToastUtil {
       ),
       ActionOption(
         title: '开发者',
-        iconData: Icons.person,
+        iconData: MdiIcons.guyFawkesMask,
         firstUrl: 'zhihu://people/naco_siren',
         secondUrl: 'https://www.zhihu.com/people/naco_siren',
       ),
@@ -154,6 +161,8 @@ class _HomePageState extends State<HomePage> with ToastUtil {
               label: '【逗】', icon: Icon(Icons.sentiment_very_satisfied)),
           BottomNavigationBarItem(
               label: '【唱】', icon: Icon(Icons.music_note)),
+          BottomNavigationBarItem(
+              label: '【哏】', icon: Icon(Icons.school)),
         ],
         currentIndex: _selectedIndex,
         onTap: _selectTabItem,
