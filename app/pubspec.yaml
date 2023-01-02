@@ -11,7 +11,7 @@ description: An open-source Flutter implementation of Mogician's Manual.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 9.0.0+90000
+version: 10.0.0+100000
 
 environment:
   sdk: ">=2.10.0 <3.0.0"
