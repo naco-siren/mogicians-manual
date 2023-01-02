@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mogicians_manual/data/image_filters.dart';
 import 'package:mogicians_manual/data/list_items.dart';
-import 'package:mogicians_manual/ui/image_viewer.dart';
+import 'package:mogicians_manual/ui/details/image_viewer.dart';
 import 'package:mogicians_manual/utils/share_helper.dart';
 
 class ImageTile extends StatefulWidget {

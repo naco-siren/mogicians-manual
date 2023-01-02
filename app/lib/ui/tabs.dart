@@ -8,13 +8,13 @@ import 'package:mogicians_manual/ui/tiles/basic_tile.dart';
 import 'package:mogicians_manual/ui/tiles/text_tile.dart';
 import 'package:mogicians_manual/ui/tiles/image_tile.dart';
 import 'package:mogicians_manual/ui/tiles/music_tile.dart';
+import 'package:mogicians_manual/ui/tiles/document_tile.dart';
 import 'package:mogicians_manual/data/list_items.dart';
 import 'package:mogicians_manual/data/models.dart';
 
 typedef MusicItemTapCallback = void Function(int);
 
 abstract class BaseTab extends StatelessWidget {
-
   BaseTab(this.isNovember);
 
   final bool isNovember;
@@ -51,6 +51,14 @@ abstract class BaseTab extends StatelessWidget {
   Widget _musicItemBuilder(ListItem item, int index, ItemTapCallback callback) {
     if (item is MusicItem) {
       return MusicTile(item, index, callback, isNovember);
+    } else {
+      return _itemBuilder(item);
+    }
+  }
+
+  Widget _documentItemBuilder(ListItem item) {
+    if (item is DocumentItem) {
+      return DocumentTile(item); // TODO: fix this shxt
     } else {
       return _itemBuilder(item);
     }
@@ -136,4 +144,18 @@ class TabChang extends BaseTab {
               ),
             ),
           ));
+}
+
+class TabGen extends BaseTab {
+  TabGen(bool isNovember) : super(isNovember);
+
+  @override
+  Widget build(BuildContext context) => ScopedModelDescendant<TabGenModel>(
+      builder: (context, child, model) => Scrollbar(
+          child: ListView.builder(
+              key: PageStorageKey<String>("tab_gen"),
+              itemCount: model.items.length,
+              itemBuilder: (context, index) => _documentItemBuilder(
+                    model.items[index],
+                  ))));
 }

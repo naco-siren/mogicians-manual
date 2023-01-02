@@ -21,7 +21,7 @@ class TextItem implements ListItem {
         body = json['body'];
 }
 
-// A ListItem that contains text data with a title and an image
+// A ListItem that contains image data with a title and an image
 class ImageItem implements ListItem {
   final String title;
   final String src;
@@ -35,7 +35,7 @@ class ImageItem implements ListItem {
   String get path => 'assets/images/$src';
 }
 
-// A ListItem that contains text data with a title and an music
+// A ListItem that contains music data with a title and source file
 class MusicItem implements ListItem {
   final String title;
   final String src;
@@ -49,6 +49,20 @@ class MusicItem implements ListItem {
         src = json['src'];
 
   String get path => 'assets/audio/$src';
+}
+
+// A ListItem that contains document data with a title and source file
+class DocumentItem implements ListItem {
+  final String title;
+  final String src;
+
+  DocumentItem(this.title, this.src);
+
+  DocumentItem.fromJson(Map<String, dynamic> json)
+      : title = json['title'],
+        src = json['src'];
+
+  String get path => 'assets/pdf/$src';
 }
 
 enum AudioStatus { STOPPED, RESUMED, PAUSED }
