@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mogicians_manual/data/list_items.dart';
+import 'package:mogicians_manual/ui/details/document_viewer.dart';
 
 class DocumentTile extends StatelessWidget {
   DocumentTile(this.item);
@@ -14,7 +15,7 @@ class DocumentTile extends StatelessWidget {
       elevation: 2,
       margin: EdgeInsets.all(0),
       child: InkWell(
-          onTap: () { /* TODO: navigate to PDF viewer */ },
+          onTap: () { _openImageViewer(context, item); },
           onLongPress: () {},
           child:  Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -37,4 +38,12 @@ class DocumentTile extends StatelessWidget {
             ],
           )),
       );
+
+  void _openImageViewer(BuildContext context, DocumentItem item) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => DocumentViewer(item))
+    );
+  }
 }
