@@ -62,7 +62,7 @@ class DocumentItem implements ListItem {
       : title = json['title'],
         src = json['src'];
 
-  String get path => 'asset/pdf/$src';
+  String get path => 'assets/pdf/$src';
 }
 
 enum AudioStatus { STOPPED, RESUMED, PAUSED }
