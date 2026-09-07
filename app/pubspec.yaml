@@ -35,7 +35,7 @@ dependencies:
   cupertino_icons: 1.0.5
 
 dependency_overrides:
-  platform: ^3.1.0
+  platform: 3.1.0
 
 dev_dependencies:
   flutter_test:

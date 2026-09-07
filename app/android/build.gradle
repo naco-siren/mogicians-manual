@@ -14,6 +14,11 @@ allprojects {
         google()
         mavenCentral()
     }
+    configurations.all {
+        resolutionStrategy.dependencySubstitution {
+            substitute module('com.github.barteksc:android-pdf-viewer') with module('com.github.mhiew:android-pdf-viewer:3.2.0-beta.1')
+        }
+    }
 }
 
 rootProject.buildDir = '../build'
