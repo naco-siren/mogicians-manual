@@ -1,34 +1,42 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:mogicians_manual/data/list_items.dart';
 
-Future<List<ListItem>> parseListItems(String fileName,
-    ListItem Function(Map<String, dynamic> item) itemConstructor) async {
+typedef ItemConstructor = ListItem Function(Map<String, dynamic> item);
 
-  List<ListItem> results = [];
-  String rawData = await rootBundle.loadString('assets/data/$fileName.json');
-  List<dynamic> sections = json.decode(rawData);
-  for (Map<String, dynamic> section in sections) {
-    String title = section['title'];
-    results.add(HeaderItem(title));
+Future<List<ListItem>> parseListItems(
+  String fileName,
+  ItemConstructor itemConstructor,
+) async {
+  final results = <ListItem>[];
+  // Decode on the main isolate: the JSON parse below runs there anyway, and
+  // AssetBundle.loadString would otherwise hop to an isolate for files > 50 KB.
+  final data = await rootBundle.load('assets/data/$fileName.json');
+  final rawData = utf8.decode(Uint8List.sublistView(data));
+  final sections = json.decode(rawData) as List<dynamic>;
+  for (final section in sections.cast<Map<String, dynamic>>()) {
+    results.add(HeaderItem(section['title'] as String));
 
-    for (Map<String, dynamic> item in section['items'])
+    final items = section['items'] as List<dynamic>;
+    for (final item in items.cast<Map<String, dynamic>>()) {
       results.add(itemConstructor(item));
+    }
   }
   results.add(FooterItem());
   return results;
 }
 
-Future<List<ListItem>> parseTextItems(String fileName) async =>
-    parseListItems(fileName, (item) => TextItem.fromJson(item));
+Future<List<ListItem>> parseTextItems(String fileName) =>
+    parseListItems(fileName, TextItem.fromJson);
 
-Future<List<ListItem>> parseImageItems(String fileName) async =>
-    parseListItems(fileName, (item) => ImageItem.fromJson(item));
+Future<List<ListItem>> parseImageItems(String fileName) =>
+    parseListItems(fileName, ImageItem.fromJson);
 
-Future<List<ListItem>> parseMusicItems(String fileName) async =>
-    parseListItems(fileName, (item) => MusicItem.fromJson(item));
+Future<List<ListItem>> parseMusicItems(String fileName) =>
+    parseListItems(fileName, MusicItem.fromJson);
 
-Future<List<ListItem>> parseDocumentItems(String fileName) async =>
-    parseListItems(fileName, (item) => DocumentItem.fromJson(item));
+Future<List<ListItem>> parseDocumentItems(String fileName) =>
+    parseListItems(fileName, DocumentItem.fromJson);

@@ -1,0 +1,17 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The lint rules below are the recommended set for Flutter apps
+# (package:flutter_lints). See https://dart.dev/lints for the full list.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+
+linter:
+  rules:
+    # Add or disable individual rules here, for example:
+    # avoid_print: false

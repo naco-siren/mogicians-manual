@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:mogicians_manual/data/list_items.dart';
 import 'package:mogicians_manual/service/music_player.dart';
+import 'package:mogicians_manual/service/theme_provider.dart';
 import 'package:mogicians_manual/service/toast_util.dart';
 
 typedef ItemTapCallback = void Function(int);
 
 class MusicTile extends StatefulWidget {
-  MusicTile(this.item, this.index, this.callback, this.disabled);
+  MusicTile(this.item, this.index, this.callback, this.disabled)
+    : super(key: ObjectKey(item));
 
   final MusicItem item;
   final int index;
@@ -15,98 +17,106 @@ class MusicTile extends StatefulWidget {
   final bool disabled;
 
   @override
-  State createState() => _MusicTileState();
+  State<MusicTile> createState() => _MusicTileState();
 }
 
 class _MusicTileState extends State<MusicTile> with ToastUtil {
   @override
-  Widget build(BuildContext context) => Card(
-        key: ObjectKey(widget.item),
-        shape: BeveledRectangleBorder(),
-        color: Theme.of(context).cardColor,
-        elevation: 2,
-        child: InkWell(
-            onTap: () => {
-              if (!widget.disabled) { _onTapped(context, widget.item) }
-            },
-            onLongPress: () {},
-            child: Column(
-              children: <Widget>[
-                Container(
-                  color: Theme.of(context).dialogBackgroundColor,
-                  height: 1,
-                ),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        widget.disabled
-                            ? _disabledControl(context)
-                            : _playControl(context, widget.item.status),
-                        SizedBox(width: 18),
-                        Expanded(
-                            child: Text(
-                          widget.item.title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2
-                              .copyWith(letterSpacing: 1.1, fontSize: 18),
-                        )),
-                      ],
-                    ))
-              ],
-            )),
-        margin: EdgeInsets.all(0),
-      );
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      shape: const BeveledRectangleBorder(),
+      color: theme.cardColor,
+      elevation: 2,
+      margin: EdgeInsets.zero,
+      child: InkWell(
+        onTap: () {
+          if (!widget.disabled) _onTapped(widget.item);
+        },
+        onLongPress: () {},
+        child: Column(
+          children: <Widget>[
+            Container(color: theme.dividerColor, height: 1),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  widget.disabled
+                      ? _disabledControl(theme)
+                      : _playControl(theme, widget.item.status),
+                  const SizedBox(width: 18),
+                  Expanded(
+                    child: Text(
+                      widget.item.title,
+                      style: (theme.textTheme.bodyMedium ?? const TextStyle())
+                          .copyWith(letterSpacing: 1.1, fontSize: 18),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  Widget _disabledControl(BuildContext context) => Icon(Icons.block,
-      size: 30, color: Theme.of(context).unselectedWidgetColor);
+  Widget _disabledControl(ThemeData theme) =>
+      Icon(Icons.block, size: 30, color: theme.unselectedWidgetColor);
 
-  Widget _playControl(BuildContext context, AudioStatus status) {
+  Widget _playControl(ThemeData theme, AudioStatus status) {
     switch (status) {
-      case AudioStatus.STOPPED:
-        return Icon(Icons.play_arrow,
-            size: 30, color: Theme.of(context).unselectedWidgetColor);
-      case AudioStatus.RESUMED:
-        return Icon(Icons.pause_circle_filled,
-            size: 30, color: Theme.of(context).toggleableActiveColor);
-      case AudioStatus.PAUSED:
-        return Icon(Icons.play_circle_filled,
-            size: 30, color: Theme.of(context).toggleableActiveColor);
-      default:
-        throw Exception("Invalid audio status!");
+      case AudioStatus.stopped:
+        return Icon(
+          Icons.play_arrow,
+          size: 30,
+          color: theme.unselectedWidgetColor,
+        );
+      case AudioStatus.resumed:
+        return Icon(
+          Icons.pause_circle_filled,
+          size: 30,
+          color: theme.mogicianColors.activeControl,
+        );
+      case AudioStatus.paused:
+        return Icon(
+          Icons.play_circle_filled,
+          size: 30,
+          color: theme.mogicianColors.activeControl,
+        );
     }
   }
 
-  void _onTapped(BuildContext context, MusicItem item) async {
+  Future<void> _onTapped(MusicItem item) async {
     final player = MusicPlayer.of(context);
-    switch (widget.item.status) {
-      case AudioStatus.STOPPED:
-        if (await player.resume(item: item) == 1) {
+    switch (item.status) {
+      case AudioStatus.stopped:
+        if (await _tryAudio(() => player.resume(item: item), '播放')) {
           setState(() => widget.callback(widget.index));
-        } else {
-          _toastError("播放");
         }
-        break;
-      case AudioStatus.RESUMED:
-        if (await player.pause() == 1) {
-          setState(() => widget.item.status = AudioStatus.PAUSED);
-        } else {
-          _toastError("暂停");
+      case AudioStatus.resumed:
+        if (await _tryAudio(player.pause, '暂停')) {
+          setState(() => item.status = AudioStatus.paused);
         }
-        break;
-      case AudioStatus.PAUSED:
-        if (await player.resume() == 1) {
-          setState(() => widget.item.status = AudioStatus.RESUMED);
-        } else {
-          _toastError("恢复播放");
+      case AudioStatus.paused:
+        if (await _tryAudio(player.resume, '恢复播放')) {
+          setState(() => item.status = AudioStatus.resumed);
         }
-        break;
     }
   }
 
-  void _toastError(String subject) {
-    showToast(context, "试图$subject时发生错误");
+  /// Runs [action]; on failure shows a toast and returns false.
+  ///
+  /// The result is only meaningful while this tile is still mounted.
+  Future<bool> _tryAudio(Future<void> Function() action, String subject) async {
+    try {
+      await action();
+      return mounted;
+    } catch (e) {
+      debugPrint('Audio error while trying to $subject: $e');
+      if (mounted) showToast(context, '试图$subject时发生错误');
+      return false;
+    }
   }
 }

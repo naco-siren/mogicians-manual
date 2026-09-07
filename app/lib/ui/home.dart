@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mogicians_manual/ui/mdi_icons.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,26 +15,26 @@ class HomePage extends StatefulWidget {
   final ThemeMode themeMode;
   final VoidCallback onThemeModeChanged;
 
-  HomePage({
-    Key key,
-    this.isNovember,
-    this.title,
-    @required this.themeMode,
-    @required this.onThemeModeChanged,
-  }) : super(key: key);
+  const HomePage({
+    super.key,
+    required this.isNovember,
+    required this.title,
+    required this.themeMode,
+    required this.onThemeModeChanged,
+  });
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with ToastUtil {
   int _selectedIndex = 0;
 
-  var _shuoModel = TabShuoModel();
-  var _xueModel = TabXueModel();
-  var _douModel = TabDouModel();
-  var _changModel = TabChangModel();
-  var _genModel = TabGenModel();
+  final _shuoModel = TabShuoModel();
+  final _xueModel = TabXueModel();
+  final _douModel = TabDouModel();
+  final _changModel = TabChangModel();
+  final _genModel = TabGenModel();
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +44,7 @@ class _HomePageState extends State<HomePage> with ToastUtil {
         title: Text(widget.title),
         actions: _getAppbarActions(),
       ),
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: Center(
-        child: _getTab(),
-      ),
+      body: Center(child: _getTab()),
       bottomNavigationBar: _getBottomNav(),
     );
   }
@@ -61,25 +58,16 @@ class _HomePageState extends State<HomePage> with ToastUtil {
           child: TabShuo(isNov),
         );
       case 1:
-        return ScopedModel<TabXueModel>(
-          model: _xueModel,
-          child: TabXue(isNov),
-        );
+        return ScopedModel<TabXueModel>(model: _xueModel, child: TabXue(isNov));
       case 2:
-        return ScopedModel<TabDouModel>(
-          model: _douModel,
-          child: TabDou(isNov),
-        );
+        return ScopedModel<TabDouModel>(model: _douModel, child: TabDou(isNov));
       case 3:
         return ScopedModel<TabChangModel>(
           model: _changModel,
           child: TabChang(isNov, _selectMusicItem),
         );
       case 4:
-        return ScopedModel<TabGenModel>(
-          model: _genModel,
-          child: TabGen(isNov),
-        );
+        return ScopedModel<TabGenModel>(model: _genModel, child: TabGen(isNov));
       default:
         throw Exception('Invalid index!');
     }
@@ -87,19 +75,17 @@ class _HomePageState extends State<HomePage> with ToastUtil {
 
   List<Widget> _getAppbarActions() {
     final options = <ActionOption>[
-
-      ActionOption(
+      const ActionOption(
         title: '源码',
         iconData: MdiIcons.github,
-        firstUrl:
-            'https://github.com/naco-siren/mogicians-manual/tree/master/app/README.md',
+        firstUrl: 'https://github.com/naco-siren/mogicians-manual/tree/master/app/README.md',
       ),
-      ActionOption(
+      const ActionOption(
         title: '反馈',
         iconData: Icons.bug_report,
         firstUrl: 'https://github.com/naco-siren/mogicians-manual/issues',
       ),
-      ActionOption(
+      const ActionOption(
         title: '开发者',
         iconData: MdiIcons.guyFawkesMask,
         firstUrl: 'zhihu://people/naco_siren',
@@ -108,10 +94,13 @@ class _HomePageState extends State<HomePage> with ToastUtil {
     ];
 
     if (!widget.isNovember) {
-      options.insert(0, ActionOption(
-        title: '夜间模式',
-        iconData: MyThemeDataProvider.getBrightnessIcon(widget.themeMode),
-      ));
+      options.insert(
+        0,
+        ActionOption(
+          title: '夜间模式',
+          iconData: MyThemeDataProvider.getBrightnessIcon(widget.themeMode),
+        ),
+      );
     }
 
     return <Widget>[
@@ -125,56 +114,54 @@ class _HomePageState extends State<HomePage> with ToastUtil {
       ),
       PopupMenuButton<ActionOption>(
         itemBuilder: (BuildContext context) =>
-          options.skip(2).map((ActionOption option) {
-            return PopupMenuItem<ActionOption>(
-              value: option,
-              child: Text(option.title),
-            );
-          }).toList(),
+            options.skip(2).map((ActionOption option) {
+              return PopupMenuItem<ActionOption>(
+                value: option,
+                child: Text(option.title),
+              );
+            }).toList(),
         onSelected: (option) => _launchUrl(option),
       ),
     ];
   }
 
-  _launchUrl(ActionOption option) async {
-    final firstUri = Uri.parse(option.firstUrl);
-    if (await canLaunchUrl(firstUri)) {
-      return await launchUrl(firstUri);
+  Future<void> _launchUrl(ActionOption option) async {
+    for (final url in [option.firstUrl, option.secondUrl]) {
+      if (url == null) continue;
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+        return;
+      }
     }
 
-    final secondUri = Uri.parse(option.secondUrl);
-    if (secondUri != null && await canLaunchUrl(secondUri)) {
-      return await launchUrl(secondUri);
-    }
-
+    if (!mounted) return;
     showToast(context, 'Deep ♂ Dark ♂ Fantasy');
   }
 
   Widget _getBottomNav() => BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              label: '【说】', icon: Icon(Icons.mic)),
-          BottomNavigationBarItem(
-              label: '【学】', icon: Icon(Icons.local_library)),
-          BottomNavigationBarItem(
-              label: '【逗】', icon: Icon(Icons.sentiment_very_satisfied)),
-          BottomNavigationBarItem(
-              label: '【唱】', icon: Icon(Icons.music_note)),
-          BottomNavigationBarItem(
-              label: '【哏】', icon: Icon(Icons.school)),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _selectTabItem,
-      );
+    type: BottomNavigationBarType.fixed,
+    items: const <BottomNavigationBarItem>[
+      BottomNavigationBarItem(label: '【说】', icon: Icon(Icons.mic)),
+      BottomNavigationBarItem(label: '【学】', icon: Icon(Icons.local_library)),
+      BottomNavigationBarItem(
+        label: '【逗】',
+        icon: Icon(Icons.sentiment_very_satisfied),
+      ),
+      BottomNavigationBarItem(label: '【唱】', icon: Icon(Icons.music_note)),
+      BottomNavigationBarItem(label: '【哏】', icon: Icon(Icons.school)),
+    ],
+    currentIndex: _selectedIndex,
+    onTap: _selectTabItem,
+  );
 
-  _selectTabItem(int index) {
+  void _selectTabItem(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  _selectMusicItem(int index) {
+  void _selectMusicItem(int index) {
     _changModel.curIdx = index;
   }
 }
@@ -182,9 +169,13 @@ class _HomePageState extends State<HomePage> with ToastUtil {
 class ActionOption {
   final String title;
   final IconData iconData;
-  final String firstUrl;
-  final String secondUrl;
+  final String? firstUrl;
+  final String? secondUrl;
 
-  const ActionOption(
-      {this.title, this.iconData, this.firstUrl, this.secondUrl});
+  const ActionOption({
+    required this.title,
+    required this.iconData,
+    this.firstUrl,
+    this.secondUrl,
+  });
 }

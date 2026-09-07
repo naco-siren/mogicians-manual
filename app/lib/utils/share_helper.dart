@@ -1,30 +1,36 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/services.dart';
-import 'package:esys_flutter_share/esys_flutter_share.dart';
-import 'package:path_provider/path_provider.dart';
+
+import 'package:share_plus/share_plus.dart';
+
 import 'package:mogicians_manual/data/list_items.dart';
 
-void shareImage(ImageItem item) async {
-  final ByteData bytes = await rootBundle.load(item.path);
-  await Share.file('发送【${item.title}】', item.src, bytes.buffer.asUint8List(), 'image/png');
-}
+Future<void> shareImage(ImageItem item) =>
+    _shareAsset(title: item.title, assetPath: item.path, fileName: item.src);
 
-Future<File> loadDocument(DocumentItem item) async {
-  // Double check if the file has already been pulled into internal storage
-  final directory = await getApplicationDocumentsDirectory();
-  final file = File('${directory.path}/${item.title}.pdf');
-  if (await file.exists()) {
-    return file;
-  }
+Future<void> shareDocument(DocumentItem item) => _shareAsset(
+  title: item.title,
+  assetPath: item.path,
+  fileName: '${item.title}.pdf',
+  mimeType: 'application/pdf',
+);
 
-  // Otherwise, export it from the root asset bundle
-  final ByteData bytes = await rootBundle.load(item.path);
-  await file.writeAsBytes(bytes.buffer.asUint8List());
-  return file;
-}
-
-void shareDocument(String title, File file) async {
-  await Share.file('发送【$title】', title + ".pdf", file.readAsBytesSync(), 'application/pdf');
+/// Hands a bundled asset to the system share sheet.
+///
+/// share_plus copies the bytes into its own cache directory and exposes them
+/// through its FileProvider, so nothing has to be written to app storage here.
+/// When [mimeType] is omitted share_plus derives it from [fileName].
+Future<void> _shareAsset({
+  required String title,
+  required String assetPath,
+  required String fileName,
+  String? mimeType,
+}) async {
+  final data = await rootBundle.load(assetPath);
+  final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+  await SharePlus.instance.share(
+    ShareParams(
+      title: '发送【$title】',
+      files: [XFile.fromData(bytes, name: fileName, mimeType: mimeType)],
+    ),
+  );
 }
