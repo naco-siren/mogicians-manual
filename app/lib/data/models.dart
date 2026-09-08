@@ -80,6 +80,25 @@ class TabChangModel extends TabModel {
     _curIdx = value;
     notifyListeners();
   }
+
+  /// Mirrors playback changes that happened outside the tab (the media
+  /// notification's play/pause/stop buttons) onto the current item.
+  void syncPlayback({required bool playing, required bool stopped}) {
+    if (_curIdx < 0) return;
+    final item = _items[_curIdx];
+    if (item is! MusicItem) return;
+
+    final status = stopped
+        ? AudioStatus.stopped
+        : playing
+        ? AudioStatus.resumed
+        : AudioStatus.paused;
+    if (item.status == status) return;
+
+    item.status = status;
+    if (stopped) _curIdx = -1;
+    notifyListeners();
+  }
 }
 
 class TabGenModel extends TabModel {

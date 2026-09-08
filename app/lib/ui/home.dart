@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import 'package:audio_service/audio_service.dart';
 
 import 'package:mogicians_manual/ui/mdi_icons.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -6,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:mogicians_manual/ui/tabs.dart';
 import 'package:mogicians_manual/data/models.dart';
+import 'package:mogicians_manual/service/music_player.dart';
 import 'package:mogicians_manual/service/theme_provider.dart';
 import 'package:mogicians_manual/service/toast_util.dart';
 
@@ -35,6 +40,27 @@ class _HomePageState extends State<HomePage> with ToastUtil {
   final _douModel = TabDouModel();
   final _changModel = TabChangModel();
   final _genModel = TabGenModel();
+
+  StreamSubscription<PlaybackState>? _playbackSubscription;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Keep the 唱 tab in step with the media notification's buttons.
+    _playbackSubscription ??= MusicPlayer.of(context).handler.playbackState
+        .listen((state) {
+          _changModel.syncPlayback(
+            playing: state.playing,
+            stopped: state.processingState == AudioProcessingState.idle,
+          );
+        });
+  }
+
+  @override
+  void dispose() {
+    _playbackSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

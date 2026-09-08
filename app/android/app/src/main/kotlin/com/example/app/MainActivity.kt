@@ -2,6 +2,8 @@
 // with since 2017) so that existing home-screen shortcuts keep resolving.
 package com.example.app
 
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 
-class MainActivity : FlutterActivity()
+// AudioServiceActivity is a FlutterActivity that shares its FlutterEngine with
+// the media playback service (audio_service).
+class MainActivity : AudioServiceActivity()

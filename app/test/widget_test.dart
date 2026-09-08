@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mogicians_manual/main.dart';
+import 'package:mogicians_manual/service/music_player.dart';
 import 'package:mogicians_manual/ui/tiles/music_tile.dart';
 import 'package:mogicians_manual/ui/tiles/text_tile.dart';
 
@@ -24,7 +25,9 @@ void main() {
   });
 
   testWidgets('home page shows the title and the five tabs', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MyApp(audioHandler: MogicianAudioHandler(AudioPlayer())),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('膜法指南'), findsOneWidget);
@@ -38,7 +41,9 @@ void main() {
   testWidgets('tapping a music item starts playback and shows the pause icon', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MyApp(audioHandler: MogicianAudioHandler(AudioPlayer())),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('【唱】'));
