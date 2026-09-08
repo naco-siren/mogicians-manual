@@ -29,31 +29,41 @@ class _ImageTileState extends State<ImageTile> {
         color: theme.cardColor,
         elevation: 2,
         margin: EdgeInsets.zero,
-        child: InkWell(
-          onTap: () => _openImageViewer(),
-          onLongPress: () => shareImage(widget.item),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                child: Text(
-                  widget.item.title,
-                  style: (theme.textTheme.bodySmall ?? const TextStyle())
-                      .copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontSize: widget.isTablet ? 15 : 12,
-                      ),
-                  textAlign: TextAlign.center,
+        // The share sheet is opened from onLongPressUp, i.e. once the finger
+        // has lifted. Opening it while the pointer is still down leaves that
+        // gesture's pointer-up event unfinished on Android and the app gets
+        // an "Input dispatching timed out" ANR.
+        child: GestureDetector(
+          onLongPressStart: (_) => Feedback.forLongPress(context),
+          onLongPressUp: () => shareImage(widget.item),
+          child: InkWell(
+            onTap: () => _openImageViewer(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 2,
+                    vertical: 1,
+                  ),
+                  child: Text(
+                    widget.item.title,
+                    style: (theme.textTheme.bodySmall ?? const TextStyle())
+                        .copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: widget.isTablet ? 15 : 12,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-              widget.greyedOut
-                  ? ColorFiltered(
-                      colorFilter: greyscale,
-                      child: Image(image: AssetImage(widget.item.path)),
-                    )
-                  : Image(image: AssetImage(widget.item.path)),
-            ],
+                widget.greyedOut
+                    ? ColorFiltered(
+                        colorFilter: greyscale,
+                        child: Image(image: AssetImage(widget.item.path)),
+                      )
+                    : Image(image: AssetImage(widget.item.path)),
+              ],
+            ),
           ),
         ),
       ),

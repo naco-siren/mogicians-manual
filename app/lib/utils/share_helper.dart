@@ -18,6 +18,9 @@ Future<void> shareDocument(DocumentItem item) => _shareAsset(
 ///
 /// share_plus copies the bytes into its own cache directory and exposes them
 /// through its FileProvider, so nothing has to be written to app storage here.
+/// The file name goes through [ShareParams.fileNameOverrides] because
+/// `XFile.fromData(name:)` is ignored on Android/iOS (cross_file derives the
+/// name from the empty path), which would otherwise share a random `.bin`.
 /// When [mimeType] is omitted share_plus derives it from [fileName].
 Future<void> _shareAsset({
   required String title,
@@ -31,6 +34,7 @@ Future<void> _shareAsset({
     ShareParams(
       title: '发送【$title】',
       files: [XFile.fromData(bytes, name: fileName, mimeType: mimeType)],
+      fileNameOverrides: [fileName],
     ),
   );
 }
