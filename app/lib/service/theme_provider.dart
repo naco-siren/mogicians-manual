@@ -6,20 +6,31 @@ import 'package:mogicians_manual/ui/mdi_icons.dart';
 /// (Flutter removed `toggleableActiveColor`).
 @immutable
 class MogicianColors extends ThemeExtension<MogicianColors> {
-  const MogicianColors({required this.activeControl});
+  const MogicianColors({
+    required this.activeControl,
+    required this.homeBackground,
+  });
 
   /// Color of the play/pause icon of the music item that is currently active.
   final Color activeControl;
 
+  /// Background of the home page behind the tab lists (formerly
+  /// `ThemeData.backgroundColor`, which was grey[700] in the dark theme).
+  final Color homeBackground;
+
   @override
-  MogicianColors copyWith({Color? activeControl}) =>
-      MogicianColors(activeControl: activeControl ?? this.activeControl);
+  MogicianColors copyWith({Color? activeControl, Color? homeBackground}) =>
+      MogicianColors(
+        activeControl: activeControl ?? this.activeControl,
+        homeBackground: homeBackground ?? this.homeBackground,
+      );
 
   @override
   MogicianColors lerp(ThemeExtension<MogicianColors>? other, double t) {
     if (other is! MogicianColors) return this;
     return MogicianColors(
       activeControl: Color.lerp(activeControl, other.activeControl, t)!,
+      homeBackground: Color.lerp(homeBackground, other.homeBackground, t)!,
     );
   }
 }
@@ -27,7 +38,10 @@ class MogicianColors extends ThemeExtension<MogicianColors> {
 extension MogicianThemeData on ThemeData {
   MogicianColors get mogicianColors =>
       extension<MogicianColors>() ??
-      MogicianColors(activeControl: colorScheme.secondary);
+      MogicianColors(
+        activeControl: colorScheme.secondary,
+        homeBackground: scaffoldBackgroundColor,
+      );
 }
 
 mixin MyThemeDataProvider {
@@ -47,14 +61,14 @@ mixin MyThemeDataProvider {
         onSurface: Colors.grey.shade100,
         onSurfaceVariant: Colors.grey.shade400,
       ),
-      // Historically the home Scaffold used ThemeData.backgroundColor, which
-      // defaulted to grey[700] in a Material 2 dark theme.
-      scaffoldBackgroundColor: Colors.grey.shade700,
       // Thin separators on top of every tile.
       dividerColor: Colors.grey.shade800,
       unselectedWidgetColor: Colors.grey.shade500,
       extensions: <ThemeExtension<dynamic>>[
-        MogicianColors(activeControl: Colors.grey.shade300),
+        MogicianColors(
+          activeControl: Colors.grey.shade300,
+          homeBackground: Colors.grey.shade700,
+        ),
       ],
     );
   }
@@ -83,9 +97,11 @@ mixin MyThemeDataProvider {
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
       ),
-      hoverColor: Colors.grey.shade700.withValues(alpha: 0.9),
       extensions: <ThemeExtension<dynamic>>[
-        MogicianColors(activeControl: Colors.grey.shade700),
+        MogicianColors(
+          activeControl: Colors.grey.shade700,
+          homeBackground: Colors.grey.shade200,
+        ),
       ],
     );
   }

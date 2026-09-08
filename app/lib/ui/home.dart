@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> with ToastUtil {
         title: Text(widget.title),
         actions: _getAppbarActions(),
       ),
+      backgroundColor: Theme.of(context).mogicianColors.homeBackground,
       body: Center(child: _getTab()),
       bottomNavigationBar: _getBottomNav(),
     );
