@@ -23,8 +23,13 @@ android {
     // Historical namespace: the launcher activity has always been
     // com.example.app.MainActivity, so keep it to preserve users' shortcuts.
     namespace = "com.example.app"
-    // Google Play requires targetSdk 36 (Android 16) or higher from 2026-08-31.
-    compileSdk = 36
+    // Compile against the newest installed platform, Android 17 QPR2 (API 37.2).
+    // Minor SDK versions need this spec form instead of a bare `compileSdk = 37`.
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 2
+        }
+    }
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -36,7 +41,9 @@ android {
         applicationId = "com.nacosiren.blog.mogiciansmanual"
         // Flutter's own floor (24 for Flutter 3.47); every plugin used here accepts it.
         minSdk = flutter.minSdkVersion
-        targetSdk = 36
+        // Google Play requires targetSdk 36 (Android 16) or higher from 2026-08-31;
+        // targeting 37 (Android 17) keeps the app a full release ahead of that.
+        targetSdk = 37
         // Taken from the `version:` line in pubspec.yaml.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
