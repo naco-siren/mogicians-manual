@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'package:mogicians_manual/ui/home.dart';
@@ -19,6 +20,10 @@ Future<void> main() async {
       androidStopForegroundOnPause: true,
     ),
   );
+  // audio_session owns audio focus (see MogicianAudioHandler.attachSession).
+  final session = await AudioSession.instance;
+  await session.configure(const AudioSessionConfiguration.music());
+  audioHandler.attachSession(session);
   runApp(MyApp(audioHandler: audioHandler));
 }
 

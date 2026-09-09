@@ -56,6 +56,12 @@ class _HomePageState extends State<HomePage> with ToastUtil {
     // Keep the 唱 tab in step with the media notification's buttons.
     _playbackSubscription?.cancel();
     _playbackSubscription = handler.playbackState.listen((state) {
+      // Playback that starts while nothing is selected (e.g. a media key
+      // after Stop) still has a media item; re-select it first.
+      if (state.playing && _changModel.curIdx < 0) {
+        final id = handler.mediaItem.value?.id;
+        if (id != null) _changModel.selectByPath(id);
+      }
       _changModel.syncPlayback(
         playing: state.playing,
         stopped: state.processingState == AudioProcessingState.idle,
