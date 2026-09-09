@@ -41,24 +41,50 @@ class _HomePageState extends State<HomePage> with ToastUtil {
   final _changModel = TabChangModel();
   final _genModel = TabGenModel();
 
+  MogicianAudioHandler? _audioHandler;
   StreamSubscription<PlaybackState>? _playbackSubscription;
+  StreamSubscription<MediaItem?>? _mediaItemSubscription;
+  bool _libraryPublished = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final handler = MusicPlayer.of(context).handler;
+    if (_audioHandler == handler) return;
+    _audioHandler = handler;
+
     // Keep the 唱 tab in step with the media notification's buttons.
-    _playbackSubscription ??= MusicPlayer.of(context).handler.playbackState
-        .listen((state) {
-          _changModel.syncPlayback(
-            playing: state.playing,
-            stopped: state.processingState == AudioProcessingState.idle,
-          );
-        });
+    _playbackSubscription?.cancel();
+    _playbackSubscription = handler.playbackState.listen((state) {
+      _changModel.syncPlayback(
+        playing: state.playing,
+        stopped: state.processingState == AudioProcessingState.idle,
+      );
+    });
+    _mediaItemSubscription?.cancel();
+    _mediaItemSubscription = handler.mediaItem.listen((item) {
+      if (item != null) _changModel.selectByPath(item.id);
+    });
+
+    // Hand the track list to the handler once the JSON has been loaded, so
+    // next/previous/shuffle know the library.
+    _changModel.addListener(_publishLibrary);
+    _publishLibrary();
+  }
+
+  void _publishLibrary() {
+    if (_libraryPublished) return;
+    final tracks = _changModel.musicItems;
+    if (tracks.isEmpty) return;
+    _audioHandler?.library = tracks;
+    _libraryPublished = true;
   }
 
   @override
   void dispose() {
+    _changModel.removeListener(_publishLibrary);
     _playbackSubscription?.cancel();
+    _mediaItemSubscription?.cancel();
     super.dispose();
   }
 
