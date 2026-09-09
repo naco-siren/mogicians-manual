@@ -90,7 +90,7 @@ class TabXue extends BaseTab {
 class TabDou extends BaseTab {
   const TabDou(super.isNovember, {super.key});
 
-  /// Height of the full-width header/footer rows inside the image grid.
+  /// Height of the full-width header/footer rows between the image grids.
   static const double _bannerExtent = 60;
 
   @override
@@ -101,55 +101,67 @@ class TabDou extends BaseTab {
         : BaseTab.colSizePhone;
 
     return ScopedModelDescendant<TabDouModel>(
-      builder: (context, child, model) => Scrollbar(
-        child: CustomScrollView(
-          key: const PageStorageKey<String>('tab_dou'),
-          slivers: _buildSlivers(model.items, crossAxisCount, isTablet),
-        ),
-      ),
+      builder: (context, child, model) {
+        final sections = _DouSection.split(model.items);
+        // One list item per section. Each section's images are laid out by a
+        // plain (non-sliver) StaggeredGrid: several SliverMasonryGrids in one
+        // CustomScrollView throw the viewport back to the top once the first
+        // grid is scrolled out of view (flutter_staggered_grid_view #265,
+        // #299, #335), so the masonry must not be a sliver.
+        return Scrollbar(
+          child: ListView.builder(
+            key: const PageStorageKey<String>('tab_dou'),
+            itemCount: sections.length,
+            itemBuilder: (context, index) =>
+                _buildSection(sections[index], crossAxisCount, isTablet),
+          ),
+        );
+      },
     );
   }
 
-  /// Turns the flat item list into one sliver per section: a full-width
-  /// header followed by a lazily built masonry grid of that section's images.
-  List<Widget> _buildSlivers(
-    List<ListItem> items,
-    int crossAxisCount,
-    bool isTablet,
-  ) {
-    final slivers = <Widget>[];
-    var pendingImages = <ImageItem>[];
+  Widget _buildSection(_DouSection section, int crossAxisCount, bool isTablet) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: _bannerExtent, child: _itemBuilder(section.banner)),
+        if (section.images.isNotEmpty)
+          StaggeredGrid.count(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 0,
+            crossAxisSpacing: 0,
+            children: [
+              for (final image in section.images)
+                StaggeredGridTile.fit(
+                  crossAxisCellCount: 1,
+                  child: ImageTile(image, isTablet, isNovember),
+                ),
+            ],
+          ),
+      ],
+    );
+  }
+}
 
-    void flushImages() {
-      if (pendingImages.isEmpty) return;
-      final images = pendingImages;
-      pendingImages = <ImageItem>[];
-      slivers.add(
-        SliverMasonryGrid.count(
-          crossAxisCount: crossAxisCount,
-          mainAxisSpacing: 0,
-          crossAxisSpacing: 0,
-          childCount: images.length,
-          itemBuilder: (BuildContext context, int index) =>
-              ImageTile(images[index], isTablet, isNovember),
-        ),
-      );
-    }
+/// A header (or the trailing footer) followed by the images under it.
+class _DouSection {
+  _DouSection(this.banner);
 
+  final ListItem banner;
+  final List<ImageItem> images = [];
+
+  /// Groups the flat item list: every non-image item starts a new section.
+  static List<_DouSection> split(List<ListItem> items) {
+    final sections = <_DouSection>[];
     for (final item in items) {
       if (item is ImageItem) {
-        pendingImages.add(item);
-        continue;
+        if (sections.isEmpty) sections.add(_DouSection(FooterItem()));
+        sections.last.images.add(item);
+      } else {
+        sections.add(_DouSection(item));
       }
-      flushImages();
-      slivers.add(
-        SliverToBoxAdapter(
-          child: SizedBox(height: _bannerExtent, child: _itemBuilder(item)),
-        ),
-      );
     }
-    flushImages();
-    return slivers;
+    return sections;
   }
 }
 

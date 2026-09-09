@@ -186,6 +186,30 @@ void main() {
     await handler.pause();
     await _pumpFrames(tester);
   });
+  testWidgets('the image tab scrolls past the first sections without jumping', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MyApp(audioHandler: MogicianAudioHandler(AudioPlayer())),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('【逗】'));
+    await tester.pumpAndSettle();
+    expect(find.text('高清'), findsOneWidget);
+
+    // Scroll through 高清 and 原生 (the point where the old sliver layout
+    // threw the viewport back to the top) and on to the third header.
+    final scrollable = find.byType(Scrollable).first;
+    await tester.scrollUntilVisible(
+      find.text('颜艺'),
+      400,
+      scrollable: scrollable,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('颜艺'), findsOneWidget);
+    expect(find.text('高清'), findsNothing);
+    expect(tester.getTopLeft(find.text('颜艺')).dy, greaterThan(0));
+  });
 }
 
 /// Pumps a few frames instead of [WidgetTester.pumpAndSettle]: while a track is
