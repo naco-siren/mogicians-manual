@@ -15,34 +15,26 @@ import 'package:mogicians_manual/data/models.dart';
 typedef MusicItemTapCallback = void Function(int);
 
 abstract class BaseTab extends StatelessWidget {
-  BaseTab(this.isNovember);
+  const BaseTab(this.isNovember, {super.key});
 
   final bool isNovember;
 
-  final int colSizeTablet = 5;
-  final int colSizePhone = 3;
+  static const int colSizeTablet = 5;
+  static const int colSizePhone = 3;
 
   Widget _itemBuilder(ListItem item) {
     if (item is HeaderItem) {
       return HeaderTile(item);
     } else if (item is FooterItem) {
-      return FooterTile();
+      return const FooterTile();
     } else {
-      throw Exception("Unknown ListItem type!");
+      throw Exception('Unknown ListItem type!');
     }
   }
 
   Widget _textItemBuilder(ListItem item) {
     if (item is TextItem) {
       return TextTile(item, isNovember);
-    } else {
-      return _itemBuilder(item);
-    }
-  }
-
-  Widget _imageItemBuilder(ListItem item, bool isTablet) {
-    if (item is ImageItem) {
-      return ImageTile(item, isTablet, isNovember);
     } else {
       return _itemBuilder(item);
     }
@@ -58,7 +50,7 @@ abstract class BaseTab extends StatelessWidget {
 
   Widget _documentItemBuilder(ListItem item) {
     if (item is DocumentItem) {
-      return DocumentTile(item); // TODO: fix this shxt
+      return DocumentTile(item);
     } else {
       return _itemBuilder(item);
     }
@@ -66,96 +58,143 @@ abstract class BaseTab extends StatelessWidget {
 }
 
 class TabShuo extends BaseTab {
-  TabShuo(bool isNovember) : super(isNovember);
+  const TabShuo(super.isNovember, {super.key});
 
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabShuoModel>(
-      builder: (context, child, model) => Scrollbar(
-            child: ListView.builder(
-              key: PageStorageKey<String>("tab_shuo"),
-              itemCount: model.items.length,
-              itemBuilder: (context, index) =>
-                  _textItemBuilder(model.items[index]),
-            ),
-          ));
+    builder: (context, child, model) => Scrollbar(
+      child: ListView.builder(
+        key: const PageStorageKey<String>('tab_shuo'),
+        itemCount: model.items.length,
+        itemBuilder: (context, index) => _textItemBuilder(model.items[index]),
+      ),
+    ),
+  );
 }
 
 class TabXue extends BaseTab {
-  TabXue(bool isNovember) : super(isNovember);
+  const TabXue(super.isNovember, {super.key});
 
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabXueModel>(
-      builder: (context, child, model) => Scrollbar(
-            child: ListView.builder(
-              key: PageStorageKey<String>("tab_xue"),
-              itemCount: model.items.length,
-              itemBuilder: (context, index) =>
-                  _textItemBuilder(model.items[index]),
-            ),
-          ));
+    builder: (context, child, model) => Scrollbar(
+      child: ListView.builder(
+        key: const PageStorageKey<String>('tab_xue'),
+        itemCount: model.items.length,
+        itemBuilder: (context, index) => _textItemBuilder(model.items[index]),
+      ),
+    ),
+  );
 }
 
 class TabDou extends BaseTab {
-  TabDou(bool isNovember) : super(isNovember);
+  const TabDou(super.isNovember, {super.key});
+
+  /// Height of the full-width header/footer rows between the image grids.
+  static const double _bannerExtent = 60;
 
   @override
   Widget build(BuildContext context) {
     final isTablet = isTabletLayout(context);
-    final crossAxisCount = isTablet ? colSizeTablet : colSizePhone;
+    final crossAxisCount = isTablet
+        ? BaseTab.colSizeTablet
+        : BaseTab.colSizePhone;
 
     return ScopedModelDescendant<TabDouModel>(
-        builder: (context, child, model) => Scrollbar(
-                child: StaggeredGridView.countBuilder(
-              key: PageStorageKey<String>("tab_dou"),
-              crossAxisCount: crossAxisCount,
-              itemCount: model.items.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  _imageItemBuilder(model.items[index], isTablet),
-              staggeredTileBuilder: (int index) {
-                final item = model.items[index];
-                if (item is HeaderItem || item is FooterItem) {
-                  return StaggeredTile.extent(crossAxisCount, 60);
-                } else {
-                  return StaggeredTile.fit(1);
-                }
-              },
-              mainAxisSpacing: 0,
-              // isTablet ? spacingTablet : spacingPhone,
-              crossAxisSpacing: 0, // isTablet ? spacingTablet : spacingPhone,
-            )));
+      builder: (context, child, model) {
+        final sections = _DouSection.split(model.items);
+        // One list item per section. Each section's images are laid out by a
+        // plain (non-sliver) StaggeredGrid: several SliverMasonryGrids in one
+        // CustomScrollView throw the viewport back to the top once the first
+        // grid is scrolled out of view (flutter_staggered_grid_view #265,
+        // #299, #335), so the masonry must not be a sliver.
+        return Scrollbar(
+          child: ListView.builder(
+            key: const PageStorageKey<String>('tab_dou'),
+            itemCount: sections.length,
+            itemBuilder: (context, index) =>
+                _buildSection(sections[index], crossAxisCount, isTablet),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSection(_DouSection section, int crossAxisCount, bool isTablet) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: _bannerExtent, child: _itemBuilder(section.banner)),
+        if (section.images.isNotEmpty)
+          StaggeredGrid.count(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 0,
+            crossAxisSpacing: 0,
+            children: [
+              for (final image in section.images)
+                StaggeredGridTile.fit(
+                  crossAxisCellCount: 1,
+                  child: ImageTile(image, isTablet, isNovember),
+                ),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+/// A header (or the trailing footer) followed by the images under it.
+class _DouSection {
+  _DouSection(this.banner);
+
+  final ListItem banner;
+  final List<ImageItem> images = [];
+
+  /// Groups the flat item list: every non-image item starts a new section.
+  static List<_DouSection> split(List<ListItem> items) {
+    final sections = <_DouSection>[];
+    for (final item in items) {
+      if (item is ImageItem) {
+        if (sections.isEmpty) sections.add(_DouSection(FooterItem()));
+        sections.last.images.add(item);
+      } else {
+        sections.add(_DouSection(item));
+      }
+    }
+    return sections;
   }
 }
 
 class TabChang extends BaseTab {
-  TabChang(bool isNovember, this.onItemTap) : super(isNovember);
+  const TabChang(super.isNovember, this.onItemTap, {super.key});
 
   final MusicItemTapCallback onItemTap;
 
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabChangModel>(
-      builder: (context, child, model) => Scrollbar(
-            child: ListView.builder(
-              key: PageStorageKey<String>("tab_chang"),
-              itemCount: model.items.length,
-              itemBuilder: (context, index) => _musicItemBuilder(
-                model.items[index],
-                index,
-                onItemTap,
-              ),
-            ),
-          ));
+    builder: (context, child, model) => Scrollbar(
+      child: ListView.builder(
+        key: const PageStorageKey<String>('tab_chang'),
+        itemCount: model.items.length,
+        itemBuilder: (context, index) =>
+            _musicItemBuilder(model.items[index], index, onItemTap),
+      ),
+    ),
+  );
 }
 
 class TabGen extends BaseTab {
-  TabGen(bool isNovember) : super(isNovember);
+  const TabGen(super.isNovember, {super.key});
 
   @override
   Widget build(BuildContext context) => ScopedModelDescendant<TabGenModel>(
-      builder: (context, child, model) => Scrollbar(
-          child: ListView.builder(
-              key: PageStorageKey<String>("tab_gen"),
-              itemCount: model.items.length,
-              itemBuilder: (context, index) => _documentItemBuilder(
-                    model.items[index],
-                  ))));
+    builder: (context, child, model) => Scrollbar(
+      child: ListView.builder(
+        key: const PageStorageKey<String>('tab_gen'),
+        itemCount: model.items.length,
+        itemBuilder: (context, index) =>
+            _documentItemBuilder(model.items[index]),
+      ),
+    ),
+  );
 }

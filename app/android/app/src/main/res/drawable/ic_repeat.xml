@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material Symbols / Material Icons "repeat" (Apache 2.0), verbatim from
+     https://github.com/google/material-design-icons/blob/master/android/*/repeat/materialicons/black/res/drawable/baseline_repeat_24.xml
+     minus the android:tint theme attribute, which SystemUI cannot resolve when it
+     renders notification actions (it applies its own tint anyway). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M7,7h10v3l4,-4 -4,-4v3L5,5v6h2L7,7zM17,17L7,17v-3l-4,4 4,4v-3h12v-6h-2v4z"/>
+</vector>
