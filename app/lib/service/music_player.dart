@@ -10,18 +10,31 @@ import 'package:audioplayers/audioplayers.dart';
 
 import 'package:mogicians_manual/data/list_items.dart';
 
+/// What happens when a track reaches its end.
+enum PlaybackMode {
+  /// The track starts over (the app's historical behaviour).
+  repeatOne,
+
+  /// The next track in list order starts; the last one wraps to the first.
+  repeatAll,
+
+  /// The next track of a per-session random order starts.
+  shuffle,
+}
+
 /// Drives the app-wide [AudioPlayer] through audio_service, so playback runs
 /// inside a media foreground service: the system shows a notification with
 /// shuffle / previous / play-pause / next / stop and, on Android 17+, keeps
 /// the music audible while the app is in the background.
 ///
 /// "Next" and "previous" walk the whole 唱 library (all sections) circularly,
-/// either in list order or, while shuffle is on, in an order that is drawn
-/// once per toggle and kept for the rest of the session.
+/// in list order or, in [PlaybackMode.shuffle], in a random order drawn when
+/// that mode is entered and kept until the mode changes or the app restarts.
 class MogicianAudioHandler extends BaseAudioHandler {
   MogicianAudioHandler(this._player, {Random? random})
     : _random = random ?? Random() {
     _stateSubscription = _player.onPlayerStateChanged.listen(_onPlayerState);
+    _completeSubscription = _player.onPlayerComplete.listen(_onTrackComplete);
     // Audio focus is handled through audio_session (see [attachSession]), so
     // audioplayers must not request it itself: its native focus handler
     // pauses the MediaPlayer without telling Dart, which would leave the
@@ -38,6 +51,7 @@ class MogicianAudioHandler extends BaseAudioHandler {
   final AudioPlayer _player;
   final Random _random;
   late final StreamSubscription<PlayerState> _stateSubscription;
+  late final StreamSubscription<void> _completeSubscription;
 
   AudioSession? _session;
   final List<StreamSubscription<dynamic>> _sessionSubscriptions = [];
@@ -62,8 +76,10 @@ class MogicianAudioHandler extends BaseAudioHandler {
     _rebuildOrder();
   }
 
-  bool get shuffleEnabled =>
-      playbackState.value.shuffleMode == AudioServiceShuffleMode.all;
+  PlaybackMode _mode = PlaybackMode.repeatOne;
+
+  /// The current end-of-track behaviour; cycled by the card's mode button.
+  PlaybackMode get mode => _mode;
 
   /// Lets [session] own audio focus for this player: playback activates it,
   /// interruptions (calls, other players) pause or duck the music, and
@@ -81,11 +97,12 @@ class MogicianAudioHandler extends BaseAudioHandler {
   /// source has loaded; on failure the real player state is published and
   /// the error rethrown so the caller can report it.
   Future<void> playItem(MusicItem item) async {
+    debugPrint('MogicianAudioHandler: playItem ${item.title}');
     final generation = ++_generation;
     _switchesInFlight++;
     try {
       await _player.stop();
-      await _player.setReleaseMode(ReleaseMode.loop);
+      await _player.setReleaseMode(_releaseMode);
       // AssetSource paths are relative to AudioCache's prefix ('assets/').
       await _player.setSource(AssetSource('audio/${item.src}'));
       if (generation != _generation) return;
@@ -148,32 +165,72 @@ class MogicianAudioHandler extends BaseAudioHandler {
   @override
   Future<void> skipToPrevious() => _skip(-1);
 
-  @override
-  Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) async {
-    final enabled = shuffleMode != AudioServiceShuffleMode.none;
+  /// Switches the end-of-track behaviour. Entering [PlaybackMode.shuffle]
+  /// draws a fresh random order; the choice is not persisted.
+  Future<void> setMode(PlaybackMode mode) async {
+    debugPrint('MogicianAudioHandler: mode $_mode -> $mode');
+    _mode = mode;
+    _rebuildOrder();
+    await _player.setReleaseMode(_releaseMode);
     final state = playbackState.value;
     playbackState.add(
       state.copyWith(
-        shuffleMode: enabled
+        repeatMode: mode == PlaybackMode.repeatOne
+            ? AudioServiceRepeatMode.one
+            : AudioServiceRepeatMode.all,
+        shuffleMode: mode == PlaybackMode.shuffle
             ? AudioServiceShuffleMode.all
             : AudioServiceShuffleMode.none,
-        controls: _controls(playing: state.playing, shuffle: enabled),
+        controls: _controls(playing: state.playing),
         androidCompactActionIndices: _compactActionIndices,
       ),
     );
-    _rebuildOrder();
   }
 
-  /// Turns shuffle on or off. Turning it on draws a new random order that is
-  /// kept until it is toggled again or the app restarts.
-  Future<void> toggleShuffle() => setShuffleMode(
-    shuffleEnabled ? AudioServiceShuffleMode.none : AudioServiceShuffleMode.all,
+  /// 单曲循环 → 全部循环 → 全部随机 → 单曲循环.
+  Future<void> cycleMode() => setMode(
+    PlaybackMode.values[(_mode.index + 1) % PlaybackMode.values.length],
   );
 
-  /// The shuffle button is wired to the fast-forward media action (see
-  /// [_controls]), so a fast-forward key press toggles shuffle too.
+  /// The mode button is wired to the fast-forward media action (see
+  /// [_controls]), so a fast-forward key press cycles the mode too.
   @override
-  Future<void> fastForward() => toggleShuffle();
+  Future<void> fastForward() => cycleMode();
+
+  // Requests from the system (Android Auto, Assistant) map onto the same
+  // three modes.
+  @override
+  Future<void> setRepeatMode(AudioServiceRepeatMode repeatMode) => setMode(
+    repeatMode == AudioServiceRepeatMode.one
+        ? PlaybackMode.repeatOne
+        : _mode == PlaybackMode.shuffle
+        ? PlaybackMode.shuffle
+        : PlaybackMode.repeatAll,
+  );
+
+  @override
+  Future<void> setShuffleMode(AudioServiceShuffleMode shuffleMode) => setMode(
+    shuffleMode == AudioServiceShuffleMode.none
+        ? (_mode == PlaybackMode.shuffle ? PlaybackMode.repeatAll : _mode)
+        : PlaybackMode.shuffle,
+  );
+
+  ReleaseMode get _releaseMode =>
+      _mode == PlaybackMode.repeatOne ? ReleaseMode.loop : ReleaseMode.stop;
+
+  void _onTrackComplete(void _) {
+    debugPrint(
+      'MogicianAudioHandler: track complete, mode=$_mode, '
+      'current=${_current?.title}, queue=${_order.length}',
+    );
+    if (_mode == PlaybackMode.repeatOne) return;
+    // Auto-advance; a failed switch already publishes the real player state.
+    unawaited(
+      _skip(1).catchError((Object e) {
+        debugPrint('MogicianAudioHandler: auto-advance failed: $e');
+      }),
+    );
+  }
 
   Future<void> _skip(int delta) async {
     if (_order.isEmpty) return;
@@ -184,7 +241,7 @@ class MogicianAudioHandler extends BaseAudioHandler {
   }
 
   void _rebuildOrder() {
-    _order = shuffleEnabled
+    _order = _mode == PlaybackMode.shuffle
         ? (List.of(_library)..shuffle(_random))
         : List.of(_library);
   }
@@ -221,17 +278,22 @@ class MogicianAudioHandler extends BaseAudioHandler {
     }
   }
 
-  List<MediaControl> _controls({required bool playing, required bool shuffle}) {
+  List<MediaControl> _controls({required bool playing}) {
+    final (modeIcon, modeLabel) = switch (_mode) {
+      PlaybackMode.repeatOne => ('drawable/ic_repeat_one', '单曲循环'),
+      PlaybackMode.repeatAll => ('drawable/ic_repeat', '全部循环'),
+      PlaybackMode.shuffle => ('drawable/ic_shuffle', '全部随机'),
+    };
     return [
-      // Shuffle rides on the fast-forward action (which this looping player
+      // The mode button rides on the fast-forward action (which this player
       // has no other use for): audio_service turns MediaControl.custom into a
       // media-session custom action only, and the notification-based media
       // card of Android 12 and below shows just the standard actions, so a
       // custom control would be invisible there. A standard action with our
       // own icon and label appears on every Android version.
       MediaControl(
-        androidIcon: shuffle ? 'drawable/ic_shuffle_on' : 'drawable/ic_shuffle',
-        label: shuffle ? '随机播放：开' : '随机播放：关',
+        androidIcon: modeIcon,
+        label: modeLabel,
         action: MediaAction.fastForward,
       ),
       MediaControl.skipToPrevious,
@@ -242,8 +304,18 @@ class MogicianAudioHandler extends BaseAudioHandler {
   }
 
   void _onPlayerState(PlayerState state) {
+    debugPrint(
+      'MogicianAudioHandler: player $state '
+      '(switching=$_switchesInFlight)',
+    );
     // The stop() inside a track switch is an implementation detail.
     if (state == PlayerState.stopped && _switchesInFlight > 0) return;
+    // In the auto-advancing modes a finished track is immediately followed
+    // by the next one; keep the "playing" state so the foreground service is
+    // not torn down and restarted from the background in between.
+    if (state == PlayerState.completed && _mode != PlaybackMode.repeatOne) {
+      return;
+    }
     _publishPlayerState(state);
   }
 
@@ -257,7 +329,7 @@ class MogicianAudioHandler extends BaseAudioHandler {
         processingState: stopped
             ? AudioProcessingState.idle
             : AudioProcessingState.ready,
-        controls: _controls(playing: playing, shuffle: shuffleEnabled),
+        controls: _controls(playing: playing),
         androidCompactActionIndices: _compactActionIndices,
       ),
     );
@@ -268,6 +340,7 @@ class MogicianAudioHandler extends BaseAudioHandler {
       await subscription.cancel();
     }
     await _stateSubscription.cancel();
+    await _completeSubscription.cancel();
     await _player.dispose();
   }
 }
