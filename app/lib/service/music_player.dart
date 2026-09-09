@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/widgets.dart';
 
 import 'package:audio_service/audio_service.dart';
@@ -97,7 +98,7 @@ class MogicianAudioHandler extends BaseAudioHandler {
   /// source has loaded; on failure the real player state is published and
   /// the error rethrown so the caller can report it.
   Future<void> playItem(MusicItem item) async {
-    debugPrint('MogicianAudioHandler: playItem ${item.title}');
+    _log('playItem ${item.title}');
     final generation = ++_generation;
     _switchesInFlight++;
     try {
@@ -168,7 +169,7 @@ class MogicianAudioHandler extends BaseAudioHandler {
   /// Switches the end-of-track behaviour. Entering [PlaybackMode.shuffle]
   /// draws a fresh random order; the choice is not persisted.
   Future<void> setMode(PlaybackMode mode) async {
-    debugPrint('MogicianAudioHandler: mode $_mode -> $mode');
+    _log('mode $_mode -> $mode');
     _mode = mode;
     _rebuildOrder();
     await _player.setReleaseMode(_releaseMode);
@@ -219,15 +220,15 @@ class MogicianAudioHandler extends BaseAudioHandler {
       _mode == PlaybackMode.repeatOne ? ReleaseMode.loop : ReleaseMode.stop;
 
   void _onTrackComplete(void _) {
-    debugPrint(
-      'MogicianAudioHandler: track complete, mode=$_mode, '
+    _log(
+      'track complete, mode=$_mode, '
       'current=${_current?.title}, queue=${_order.length}',
     );
     if (_mode == PlaybackMode.repeatOne) return;
     // Auto-advance; a failed switch already publishes the real player state.
     unawaited(
       _skip(1).catchError((Object e) {
-        debugPrint('MogicianAudioHandler: auto-advance failed: $e');
+        _log('auto-advance failed: $e');
       }),
     );
   }
@@ -304,8 +305,8 @@ class MogicianAudioHandler extends BaseAudioHandler {
   }
 
   void _onPlayerState(PlayerState state) {
-    debugPrint(
-      'MogicianAudioHandler: player $state '
+    _log(
+      'player $state '
       '(switching=$_switchesInFlight)',
     );
     // The stop() inside a track switch is an implementation detail.
@@ -333,6 +334,13 @@ class MogicianAudioHandler extends BaseAudioHandler {
         androidCompactActionIndices: _compactActionIndices,
       ),
     );
+  }
+
+  /// Diagnostics for the playback flow. [kDebugMode] is a compile-time
+  /// constant, so release builds drop these calls entirely (the Flutter
+  /// counterpart of an `#if DEBUG` block).
+  void _log(String message) {
+    if (kDebugMode) debugPrint('MogicianAudioHandler: $message');
   }
 
   Future<void> dispose() async {
