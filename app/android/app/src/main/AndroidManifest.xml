@@ -62,16 +62,11 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
-        <!-- Web links (GitHub, zhihu.com) opened from the app bar. -->
+        <!-- Web links (GitHub, the developer's site) opened from the app bar. -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <category android:name="android.intent.category.BROWSABLE"/>
             <data android:scheme="https"/>
-        </intent>
-        <!-- The 知乎 app deep link tried first for the developer profile. -->
-        <intent>
-            <action android:name="android.intent.action.VIEW"/>
-            <data android:scheme="zhihu"/>
         </intent>
     </queries>
 </manifest>

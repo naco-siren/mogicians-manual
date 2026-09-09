@@ -147,8 +147,7 @@ class _HomePageState extends State<HomePage> with ToastUtil {
       const ActionOption(
         title: '开发者',
         iconData: MdiIcons.guyFawkesMask,
-        firstUrl: 'zhihu://people/naco_siren',
-        secondUrl: 'https://www.zhihu.com/people/naco_siren',
+        firstUrl: 'https://naco-siren.github.io',
       ),
     ];
 
