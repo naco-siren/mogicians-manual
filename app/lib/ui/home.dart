@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import 'package:audio_service/audio_service.dart';
 
 import 'package:mogicians_manual/ui/mdi_icons.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -6,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:mogicians_manual/ui/tabs.dart';
 import 'package:mogicians_manual/data/models.dart';
+import 'package:mogicians_manual/service/music_player.dart';
 import 'package:mogicians_manual/service/theme_provider.dart';
 import 'package:mogicians_manual/service/toast_util.dart';
 
@@ -35,6 +40,59 @@ class _HomePageState extends State<HomePage> with ToastUtil {
   final _douModel = TabDouModel();
   final _changModel = TabChangModel();
   final _genModel = TabGenModel();
+
+  MogicianAudioHandler? _audioHandler;
+  StreamSubscription<PlaybackState>? _playbackSubscription;
+  StreamSubscription<MediaItem?>? _mediaItemSubscription;
+  bool _libraryPublished = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final handler = MusicPlayer.of(context).handler;
+    if (_audioHandler == handler) return;
+    _audioHandler = handler;
+
+    // Keep the 唱 tab in step with the media notification's buttons.
+    _playbackSubscription?.cancel();
+    _playbackSubscription = handler.playbackState.listen((state) {
+      // Playback that starts while nothing is selected (e.g. a media key
+      // after Stop) still has a media item; re-select it first.
+      if (state.playing && _changModel.curIdx < 0) {
+        final id = handler.mediaItem.value?.id;
+        if (id != null) _changModel.selectByPath(id);
+      }
+      _changModel.syncPlayback(
+        playing: state.playing,
+        stopped: state.processingState == AudioProcessingState.idle,
+      );
+    });
+    _mediaItemSubscription?.cancel();
+    _mediaItemSubscription = handler.mediaItem.listen((item) {
+      if (item != null) _changModel.selectByPath(item.id);
+    });
+
+    // Hand the track list to the handler once the JSON has been loaded, so
+    // next/previous/shuffle know the library.
+    _changModel.addListener(_publishLibrary);
+    _publishLibrary();
+  }
+
+  void _publishLibrary() {
+    if (_libraryPublished) return;
+    final tracks = _changModel.musicItems;
+    if (tracks.isEmpty) return;
+    _audioHandler?.library = tracks;
+    _libraryPublished = true;
+  }
+
+  @override
+  void dispose() {
+    _changModel.removeListener(_publishLibrary);
+    _playbackSubscription?.cancel();
+    _mediaItemSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

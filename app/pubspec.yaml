@@ -7,7 +7,7 @@ publish_to: 'none'
 # followed by an optional build number separated by a +.
 # In Android, build-name is used as versionName while build-number used as versionCode.
 # Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-version: 10.0.2+100002
+version: 10.1.0+100100
 
 environment:
   sdk: ^3.13.0
@@ -21,6 +21,8 @@ dependencies:
   flutter_staggered_grid_view: ^0.7.0
   share_plus: ^13.3.0
   audioplayers: ^6.8.1
+  audio_service: ^0.18.19
+  audio_session: ^0.2.4
   url_launcher: ^6.3.2
   photo_view: ^0.15.0
   pdfx: ^2.11.0

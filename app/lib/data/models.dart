@@ -65,6 +65,19 @@ class TabChangModel extends TabModel {
 
   int get curIdx => _curIdx;
 
+  /// Every playable track of this tab in list order.
+  List<MusicItem> get musicItems =>
+      _items.whereType<MusicItem>().toList(growable: false);
+
+  /// Highlights the track whose asset path is [path], e.g. after the media
+  /// notification skipped to another one. Unknown paths are ignored.
+  void selectByPath(String path) {
+    final index = _items.indexWhere(
+      (item) => item is MusicItem && item.path == path,
+    );
+    if (index >= 0) curIdx = index;
+  }
+
   set curIdx(int value) {
     if (value == curIdx || value < 0 || value >= _items.length) return;
 
@@ -78,6 +91,25 @@ class TabChangModel extends TabModel {
     }
 
     _curIdx = value;
+    notifyListeners();
+  }
+
+  /// Mirrors playback changes that happened outside the tab (the media
+  /// notification's play/pause/stop buttons) onto the current item.
+  void syncPlayback({required bool playing, required bool stopped}) {
+    if (_curIdx < 0) return;
+    final item = _items[_curIdx];
+    if (item is! MusicItem) return;
+
+    final status = stopped
+        ? AudioStatus.stopped
+        : playing
+        ? AudioStatus.resumed
+        : AudioStatus.paused;
+    if (item.status == status) return;
+
+    item.status = status;
+    if (stopped) _curIdx = -1;
     notifyListeners();
   }
 }

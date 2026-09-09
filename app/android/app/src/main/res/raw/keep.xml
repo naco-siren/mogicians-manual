@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- These drawables are referenced only by name at runtime (the notification's
+     small icon and shuffle buttons from Dart, audio_service's own action
+     icons), so release resource shrinking must not drop them. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_music,@drawable/ic_shuffle,@drawable/ic_shuffle_on,@drawable/audio_service_*" />

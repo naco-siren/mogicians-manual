@@ -2,6 +2,7 @@
 // music tab drives the (faked) audio platform.
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers_platform_interface/audioplayers_platform_interface.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mogicians_manual/main.dart';
+import 'package:mogicians_manual/service/music_player.dart';
 import 'package:mogicians_manual/ui/tiles/music_tile.dart';
 import 'package:mogicians_manual/ui/tiles/text_tile.dart';
 
@@ -24,7 +26,9 @@ void main() {
   });
 
   testWidgets('home page shows the title and the five tabs', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MyApp(audioHandler: MogicianAudioHandler(AudioPlayer())),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('膜法指南'), findsOneWidget);
@@ -38,7 +42,9 @@ void main() {
   testWidgets('tapping a music item starts playback and shows the pause icon', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MyApp(audioHandler: MogicianAudioHandler(AudioPlayer())),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('【唱】'));
@@ -59,6 +65,73 @@ void main() {
     expect(find.byIcon(Icons.pause_circle_filled), findsNothing);
     expect(audioPlatform.calls, contains('pause'));
   });
+  testWidgets(
+    'next, previous and shuffle from the handler move the highlight',
+    (tester) async {
+      final handler = MogicianAudioHandler(AudioPlayer(), random: Random(7));
+      await tester.pumpWidget(MyApp(audioHandler: handler));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('【唱】'));
+      await tester.pumpAndSettle();
+
+      // The tile that shows the pause icon (only built while on screen).
+      Finder playingTile() => find.ancestor(
+        of: find.byIcon(Icons.pause_circle_filled),
+        matching: find.byType(MusicTile),
+      );
+      String? currentId() => handler.mediaItem.value?.id;
+
+      await tester.tap(find.byType(MusicTile).first);
+      await _pumpFrames(tester);
+      final firstId = currentId();
+      expect(firstId, isNotNull);
+
+      // Next in list order highlights the second tile.
+      await handler.skipToNext();
+      await _pumpFrames(tester);
+      expect(find.byIcon(Icons.pause_circle_filled), findsOneWidget);
+      expect(
+        tester.widget<MusicTile>(playingTile()).item.path,
+        tester.widget<MusicTile>(find.byType(MusicTile).at(1)).item.path,
+      );
+      expect(currentId(), isNot(firstId));
+
+      // Previous goes back; from the first track it wraps around to the last
+      // one (off screen, so only the handler's current item can be checked),
+      // and next from there wraps back to the first.
+      await handler.skipToPrevious();
+      await _pumpFrames(tester);
+      expect(currentId(), firstId);
+      expect(tester.widget<MusicTile>(playingTile()).item.path, firstId);
+      await handler.skipToPrevious();
+      await _pumpFrames(tester);
+      expect(currentId(), isNot(firstId));
+      await handler.skipToNext();
+      await _pumpFrames(tester);
+      expect(currentId(), firstId);
+      expect(handler.shuffleEnabled, isFalse);
+
+      // Shuffle on: next picks a different track and previous undoes it.
+      await handler.toggleShuffle();
+      await _pumpFrames(tester);
+      expect(handler.shuffleEnabled, isTrue);
+      await handler.skipToNext();
+      await _pumpFrames(tester);
+      expect(currentId(), isNot(firstId));
+      await handler.skipToPrevious();
+      await _pumpFrames(tester);
+      expect(currentId(), firstId);
+      expect(tester.widget<MusicTile>(playingTile()).item.path, firstId);
+
+      await handler.toggleShuffle();
+      expect(handler.shuffleEnabled, isFalse);
+
+      // Leave the player paused so audioplayers' frame-based position
+      // updater is not still scheduling frames when the tree is torn down.
+      await handler.pause();
+      await _pumpFrames(tester);
+    },
+  );
 }
 
 /// Pumps a few frames instead of [WidgetTester.pumpAndSettle]: while a track is
