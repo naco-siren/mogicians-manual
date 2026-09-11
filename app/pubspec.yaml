@@ -29,6 +29,8 @@ dependencies:
   # Pixel-level obfuscation of shared memes (pure Dart).
   image: ^4.9.2
   meta: ^1.19.0
+  # Fixed temp location for the file handed to the share sheet.
+  path_provider: ^2.1.5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
