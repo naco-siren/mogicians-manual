@@ -52,6 +52,13 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+        <!-- Serves this app's own installed APK to the share sheet
+             ("分享安装包"), read-only and only through per-intent URI grants. -->
+        <provider
+            android:name=".ApkProvider"
+            android:authorities="${applicationId}.apk"
+            android:exported="false"
+            android:grantUriPermissions="true" />
     </application>
     <!-- Package visibility (Android 11+). Without these entries the queries
          made by the Flutter engine and by url_launcher's canLaunchUrl() come

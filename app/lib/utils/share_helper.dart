@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show compute, debugPrint;
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:mogicians_manual/data/list_items.dart';
+import 'package:mogicians_manual/service/toast_util.dart';
 import 'package:mogicians_manual/utils/image_obfuscator.dart';
 
 /// The share in progress, if any. Obfuscating a large meme takes a second or
@@ -31,7 +31,7 @@ Future<void> shareImage(ImageItem item) {
 Future<void> _shareImage(ImageItem item) async {
   // Only say something when the obfuscating is slow enough to be noticed.
   final notice = Timer(const Duration(milliseconds: 400), () {
-    _toast('正在生成新的图片…');
+    showAppToast('正在生成新的图片…');
   });
   try {
     final data = await rootBundle.load(item.path);
@@ -57,7 +57,7 @@ Future<void> _shareImage(ImageItem item) async {
     );
   } on Object catch (error, stack) {
     debugPrint('shareImage: ${item.src} failed: $error\n$stack');
-    _toast('分享失败');
+    showAppToast('分享失败');
   } finally {
     notice.cancel();
   }
@@ -74,7 +74,7 @@ Future<void> shareDocument(DocumentItem item) async {
     );
   } on Object catch (error, stack) {
     debugPrint('shareDocument: ${item.src} failed: $error\n$stack');
-    _toast('分享失败');
+    showAppToast('分享失败');
   }
 }
 
@@ -107,16 +107,5 @@ Future<void> _share({
       title: '发送【$title】',
       files: [XFile(file.path, mimeType: mimeType)],
     ),
-  );
-}
-
-void _toast(String message) {
-  Fluttertoast.showToast(
-    msg: message,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    backgroundColor: const Color(0xE6616161),
-    textColor: const Color(0xFFFFFFFF),
-    fontSize: 14.0,
   );
 }

@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mogicians_manual/main.dart';
+import 'package:mogicians_manual/service/app_sharing.dart';
 import 'package:mogicians_manual/service/music_player.dart';
+import 'package:mogicians_manual/ui/home.dart';
 import 'package:mogicians_manual/ui/tiles/music_tile.dart';
 import 'package:mogicians_manual/ui/tiles/text_tile.dart';
 
@@ -186,6 +188,84 @@ void main() {
     await handler.pause();
     await _pumpFrames(tester);
   });
+  group('分享安装包', () {
+    /// Answers the Android side of AppSharing and records the calls made.
+    List<String> fakeAppSharing(WidgetTester tester, {required bool split}) {
+      final calls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        AppSharing.channel,
+        (call) async {
+          calls.add(call.method);
+          if (call.method == 'describe') {
+            return <String, Object?>{
+              'versionName': '10.1.2',
+              'fileName': '膜法指南-10.1.2.apk',
+              'sizeBytes': 147 * 1024 * 1024,
+              'splitInstall': split,
+            };
+          }
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          AppSharing.channel,
+          null,
+        ),
+      );
+      return calls;
+    }
+
+    Future<void> openFromMenu(WidgetTester tester) async {
+      await tester.pumpWidget(
+        MyApp(audioHandler: MogicianAudioHandler(AudioPlayer())),
+      );
+      await _pumpFrames(tester);
+      await tester.tap(find.byType(PopupMenuButton<ActionOption>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('分享安装包'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets(
+      'explains what is sent, then hands the APK to the share sheet',
+      (tester) async {
+        final calls = fakeAppSharing(tester, split: false);
+        await openFromMenu(tester);
+        expect(find.textContaining('膜法指南-10.1.2.apk'), findsOneWidget);
+        expect(find.textContaining('147 MB'), findsOneWidget);
+        expect(find.textContaining('.apk.1'), findsNothing);
+        expect(find.textContaining('.1'), findsOneWidget);
+        expect(calls, ['describe']);
+
+        await tester.tap(find.text('分享'));
+        await tester.pumpAndSettle();
+        expect(calls, ['describe', 'share']);
+        expect(find.byType(AlertDialog), findsNothing);
+      },
+    );
+
+    testWidgets('cancelling shares nothing', (tester) async {
+      final calls = fakeAppSharing(tester, split: false);
+      await openFromMenu(tester);
+      await tester.tap(find.text('取消'));
+      await tester.pumpAndSettle();
+      expect(calls, ['describe']);
+      expect(find.byType(AlertDialog), findsNothing);
+    });
+
+    testWidgets('a copy installed in pieces by Play gets the download page', (
+      tester,
+    ) async {
+      final calls = fakeAppSharing(tester, split: true);
+      await openFromMenu(tester);
+      expect(find.text('暂时无法直接分享'), findsOneWidget);
+      expect(find.text('打开下载页'), findsOneWidget);
+      expect(find.text('分享'), findsNothing);
+      expect(calls, ['describe']);
+    });
+  });
+
   testWidgets('the image tab scrolls past the first sections without jumping', (
     tester,
   ) async {
