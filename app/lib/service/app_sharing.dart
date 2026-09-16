@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// How the installer is handed over: the APK itself, or wrapped in a ZIP for
-/// receivers that refuse .apk files (Bluetooth) or rename them (微信 / QQ).
+/// receivers that refuse .apk files (Bluetooth) or rename them (QQ).
 enum ShareFormat { apk, zip }
 
 /// A phone-to-phone transfer app found on this phone.

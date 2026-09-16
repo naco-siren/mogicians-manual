@@ -143,8 +143,8 @@ class _FileDialog extends StatelessWidget {
                     '（例如小米的 ShareMe、快牙、LocalSend；对方也要装），'
                     '或者直接把文件发出去：' : '不经过传文件应用，直接把文件发出去：'}\n\n'
           '• APK：原样发送 ${app.fileName}（约 ${app.sizeLabel}）。'
-          '微信 / QQ 会把它改名成 .apk.1，对方去掉 .1 再安装\n'
-          '• ZIP：打包成 zip 再发。蓝牙也肯收，微信不会改名，'
+          'QQ 收到后文件名会多一个 .1，对方去掉 .1 再安装\n'
+          '• ZIP：打包成 zip 再发。蓝牙也肯收，QQ 不会改名，'
           '对方解压出 .apk 再安装\n\n'
           '$_receiverTips',
         ),
@@ -157,7 +157,7 @@ class _FileDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             if (app.apkReceivers == 0) {
-              showAppToast('这台手机上没有能接收 APK 文件的应用，装个微信 / QQ / LocalSend 再试');
+              showAppToast('这台手机上没有能接收 APK 文件的应用，装个 QQ 或 LocalSend 再试');
               return;
             }
             Navigator.pop(context);
