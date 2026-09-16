@@ -60,7 +60,7 @@ class AppSharing(private val activity: Activity) : MethodChannel.MethodCallHandl
         val apkReceivers = receivers(ApkProvider.APK_MIME_TYPE)
         val zipReceivers = receivers(ApkProvider.ZIP_MIME_TYPE)
         val shareApps = ShareApps.candidates.mapNotNull { candidate ->
-            val label = try {
+            val installedLabel = try {
                 pm.getApplicationLabel(pm.getApplicationInfo(candidate.packageName, 0)).toString()
             } catch (e: PackageManager.NameNotFoundException) {
                 return@mapNotNull null
@@ -74,7 +74,7 @@ class AppSharing(private val activity: Activity) : MethodChannel.MethodCallHandl
             }
             mapOf(
                 "package" to candidate.packageName,
-                "label" to label.ifBlank { candidate.label },
+                "label" to candidate.label.ifBlank { installedLabel },
                 "sendsApk" to sendsApk,
                 "sendsZip" to sendsZip,
             )

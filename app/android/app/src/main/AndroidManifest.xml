@@ -84,18 +84,20 @@
         </intent>
         <package android:name="com.miui.mishare.connectivity"/>
         <package android:name="com.coloros.oshare"/>
-        <package android:name="com.oplus.oshare"/>
+        <package android:name="com.oneplus.oshare"/>
         <package android:name="com.vivo.easyshare"/>
         <package android:name="com.hihonor.android.instantshare"/>
         <package android:name="com.huawei.android.instantshare"/>
+        <package android:name="com.samsung.android.app.sharelive"/>
+        <package android:name="com.samsung.android.aware.service"/>
+        <package android:name="com.google.android.apps.nbu.files"/>
         <package android:name="com.xiaomi.midrop"/>
+        <package android:name="org.localsend.localsend_app"/>
+        <package android:name="moe.reimu.catshare"/>
         <package android:name="com.dewmobile.kuaiya"/>
         <package android:name="com.dewmobile.kuaiya.play"/>
         <package android:name="com.lenovo.anyshare"/>
         <package android:name="com.lenovo.anyshare.gps"/>
         <package android:name="cn.xender"/>
-        <package android:name="moe.reimu.catshare"/>
-        <package android:name="org.localsend.localsend_app"/>
-        <package android:name="com.google.android.apps.nbu.files"/>
     </queries>
 </manifest>
