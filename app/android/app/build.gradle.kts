@@ -65,6 +65,19 @@ android {
             signingConfig = signingConfigs.getByName(if (hasReleaseKeystore) "release" else "debug")
         }
     }
+
+    // No configuration splits: Google Play then installs a single, complete
+    // base.apk on every device instead of base + config.<abi>/<density>/<lang>
+    // pieces. That file is what the in-app "分享安装包" hands to other phones;
+    // a lone base.apk out of a split install is refused by Android 10+ (and
+    // would crash on older phones, since the native libraries live in the ABI
+    // split). The price is that every download carries all ABIs, about 15 MB
+    // per extra ABI here.
+    bundle {
+        abi { enableSplit = false }
+        density { enableSplit = false }
+        language { enableSplit = false }
+    }
 }
 
 kotlin {

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import 'package:audio_service/audio_service.dart';
 
+import 'package:mogicians_manual/service/app_sharing.dart';
+import 'package:mogicians_manual/ui/dialogs/app_sharing_dialog.dart';
 import 'package:mogicians_manual/ui/mdi_icons.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -149,6 +151,12 @@ class _HomePageState extends State<HomePage> with ToastUtil {
         iconData: MdiIcons.guyFawkesMask,
         firstUrl: 'https://naco-siren.github.io',
       ),
+      if (AppSharing.isSupported)
+        ActionOption(
+          title: '分享安装包',
+          iconData: Icons.share,
+          onSelected: () => showAppSharingDialog(context),
+        ),
     ];
 
     if (!widget.isNovember) {
@@ -178,7 +186,9 @@ class _HomePageState extends State<HomePage> with ToastUtil {
                 child: Text(option.title),
               );
             }).toList(),
-        onSelected: (option) => _launchUrl(option),
+        onSelected: (option) => option.onSelected != null
+            ? option.onSelected!()
+            : _launchUrl(option),
       ),
     ];
   }
@@ -230,10 +240,14 @@ class ActionOption {
   final String? firstUrl;
   final String? secondUrl;
 
+  /// Runs instead of opening [firstUrl] / [secondUrl].
+  final VoidCallback? onSelected;
+
   const ActionOption({
     required this.title,
     required this.iconData,
     this.firstUrl,
     this.secondUrl,
+    this.onSelected,
   });
 }
