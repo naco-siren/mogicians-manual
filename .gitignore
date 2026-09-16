@@ -1,0 +1,3 @@
+# JetBrains / Android Studio project files (the Flutter app has its own .gitignore under app/)
+.idea/
+*.iml
