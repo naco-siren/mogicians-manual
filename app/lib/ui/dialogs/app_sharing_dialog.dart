@@ -4,9 +4,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:mogicians_manual/service/app_sharing.dart';
 import 'package:mogicians_manual/service/toast_util.dart';
 
-/// "分享安装包": explains what is about to be sent, then hands the installed
-/// APK to the share sheet. A copy that Google Play installed in pieces cannot
-/// be shared as a file, so that case offers the download page instead.
+/// "分享安装包": hands the installed APK to another phone. Three situations:
+///
+/// * a phone-to-phone transfer app is installed: offer to send through it
+///   (or to open it), which is what works best on Chinese phones;
+/// * none is: suggest installing one, and offer the raw .apk or a .zip
+///   wrapper through the system share sheet, each checked for receivers;
+/// * Google Play installed this copy in pieces: it cannot be shared as a
+///   file, so offer the download page instead.
 Future<void> showAppSharingDialog(BuildContext context) async {
   final InstalledApp app;
   try {
@@ -19,14 +24,112 @@ Future<void> showAppSharingDialog(BuildContext context) async {
   if (!context.mounted) return;
   await showDialog<void>(
     context: context,
-    builder: (context) => app.splitInstall
-        ? _DownloadPageDialog(app)
-        : _ShareInstallerDialog(app),
+    builder: (context) {
+      if (app.splitInstall) return _DownloadPageDialog(app);
+      if (app.shareApps.isNotEmpty) return _TransferAppsDialog(app);
+      return _FileDialog(app);
+    },
   );
 }
 
-class _ShareInstallerDialog extends StatelessWidget {
-  const _ShareInstallerDialog(this.app);
+const _receiverTips =
+    '对方那边：系统会要求允许"安装未知应用"；'
+    '小米 / OPPO / vivo 可能提示"未备案"或"风险应用"；'
+    '新款华为（HarmonyOS NEXT）装不了任何 APK。';
+
+Future<void> _run(Future<void> Function() action, String failure) async {
+  try {
+    await action();
+  } on Object catch (error, stack) {
+    debugPrint('showAppSharingDialog: $error\n$stack');
+    showAppToast(failure);
+  }
+}
+
+class _TransferAppsDialog extends StatelessWidget {
+  const _TransferAppsDialog(this.app);
+
+  final InstalledApp app;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('分享安装包'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              '这台手机上装了能面对面传文件的应用，用它发最省事'
+              '（对方也要装同一个，收到后点开就能安装）：',
+            ),
+            const SizedBox(height: 12),
+            for (final transfer in app.shareApps)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: FilledButton.tonal(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    if (transfer.sendsApk || transfer.sendsZip) {
+                      if (!transfer.sendsApk) showAppToast('正在打包 ZIP…');
+                      _run(
+                        () => AppSharing.share(
+                          format: transfer.sendsApk
+                              ? ShareFormat.apk
+                              : ShareFormat.zip,
+                          packageName: transfer.packageName,
+                        ),
+                        '打不开 ${transfer.label}',
+                      );
+                    } else {
+                      _run(
+                        () => AppSharing.open(transfer.packageName),
+                        '打不开 ${transfer.label}',
+                      );
+                    }
+                  },
+                  child: Text(
+                    transfer.sendsApk
+                        ? '用 ${transfer.label} 发送'
+                        : transfer.sendsZip
+                        ? '用 ${transfer.label} 发送 ZIP'
+                        : '打开 ${transfer.label}',
+                  ),
+                ),
+              ),
+            const SizedBox(height: 4),
+            Text(
+              '文件：${app.fileName}（约 ${app.sizeLabel}）'
+              '${app.shareApps.any((a) => !a.sendsApk && !a.sendsZip) ? '\n"打开"的应用收不了外来文件，打开后在它里面选"应用"，找到膜法指南发送。' : ''}'
+              '\n\n$_receiverTips',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('取消'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            showDialog<void>(
+              context: context,
+              builder: (context) => _FileDialog(app),
+            );
+          },
+          child: const Text('其他方式'),
+        ),
+      ],
+    );
+  }
+}
+
+class _FileDialog extends StatelessWidget {
+  const _FileDialog(this.app);
 
   final InstalledApp app;
 
@@ -36,14 +139,14 @@ class _ShareInstallerDialog extends StatelessWidget {
       title: const Text('分享安装包'),
       content: SingleChildScrollView(
         child: Text(
-          '把这台手机上装好的膜法指南 ${app.versionName}'
-          '（${app.fileName}，约 ${app.sizeLabel}）原样发给别人，'
-          '对方不需要 Google Play 也能安装。\n\n'
-          '对方那边：\n'
-          '• 微信 / QQ 收到的文件名会多一个 .1，改回 .apk 再安装\n'
-          '• 系统会要求允许"安装未知应用"\n'
-          '• 小米 / OPPO / vivo 可能提示"未备案"或"风险应用"\n'
-          '• 新款华为（HarmonyOS NEXT）装不了任何 APK',
+          '${app.shareApps.isEmpty ? '这台手机上没有装面对面传文件的应用。建议先装一个'
+                    '（例如小米的 ShareMe、快牙、LocalSend；对方也要装），'
+                    '或者直接把文件发出去：' : '不经过传文件应用，直接把文件发出去：'}\n\n'
+          '• APK：原样发送 ${app.fileName}（约 ${app.sizeLabel}）。'
+          '微信 / QQ 会把它改名成 .apk.1，对方去掉 .1 再安装\n'
+          '• ZIP：打包成 zip 再发。蓝牙也肯收，微信不会改名，'
+          '对方解压出 .apk 再安装\n\n'
+          '$_receiverTips',
         ),
       ),
       actions: [
@@ -52,16 +155,27 @@ class _ShareInstallerDialog extends StatelessWidget {
           child: const Text('取消'),
         ),
         TextButton(
-          onPressed: () async {
-            Navigator.pop(context);
-            try {
-              await AppSharing.share();
-            } on Object catch (error, stack) {
-              debugPrint('AppSharing.share: $error\n$stack');
-              showAppToast('分享失败');
+          onPressed: () {
+            if (app.apkReceivers == 0) {
+              showAppToast('这台手机上没有能接收 APK 文件的应用，装个微信 / QQ / LocalSend 再试');
+              return;
             }
+            Navigator.pop(context);
+            _run(() => AppSharing.share(format: ShareFormat.apk), '分享失败');
           },
-          child: const Text('分享'),
+          child: const Text('发送 APK'),
+        ),
+        TextButton(
+          onPressed: () {
+            if (app.zipReceivers == 0) {
+              showAppToast('这台手机上没有能接收 ZIP 文件的应用');
+              return;
+            }
+            Navigator.pop(context);
+            showAppToast('正在打包 ZIP…');
+            _run(() => AppSharing.share(format: ShareFormat.zip), '打包失败');
+          },
+          child: const Text('发送 ZIP'),
         ),
       ],
     );

@@ -75,5 +75,27 @@
             <category android:name="android.intent.category.BROWSABLE"/>
             <data android:scheme="https"/>
         </intent>
+        <!-- "分享安装包": which apps would take the installer from the share
+             sheet, and which phone-to-phone transfer apps are installed
+             (keep in sync with ShareApps.kt). -->
+        <intent>
+            <action android:name="android.intent.action.SEND"/>
+            <data android:mimeType="*/*"/>
+        </intent>
+        <package android:name="com.miui.mishare.connectivity"/>
+        <package android:name="com.coloros.oshare"/>
+        <package android:name="com.oplus.oshare"/>
+        <package android:name="com.vivo.easyshare"/>
+        <package android:name="com.hihonor.android.instantshare"/>
+        <package android:name="com.huawei.android.instantshare"/>
+        <package android:name="com.xiaomi.midrop"/>
+        <package android:name="com.dewmobile.kuaiya"/>
+        <package android:name="com.dewmobile.kuaiya.play"/>
+        <package android:name="com.lenovo.anyshare"/>
+        <package android:name="com.lenovo.anyshare.gps"/>
+        <package android:name="cn.xender"/>
+        <package android:name="moe.reimu.catshare"/>
+        <package android:name="org.localsend.localsend_app"/>
+        <package android:name="com.google.android.apps.nbu.files"/>
     </queries>
 </manifest>

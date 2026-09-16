@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers_platform_interface/audioplayers_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:mogicians_manual/main.dart';
@@ -189,32 +190,68 @@ void main() {
     await _pumpFrames(tester);
   });
   group('分享安装包', () {
+    const shareMe = <String, Object?>{
+      'package': 'com.xiaomi.midrop',
+      'label': 'ShareMe',
+      'sendsApk': true,
+      'sendsZip': true,
+    };
+    const zapya = <String, Object?>{
+      'package': 'com.dewmobile.kuaiya.play',
+      'label': 'Zapya',
+      'sendsApk': false,
+      'sendsZip': false,
+    };
+
     /// Answers the Android side of AppSharing and records the calls made.
-    List<String> fakeAppSharing(WidgetTester tester, {required bool split}) {
-      final calls = <String>[];
+    List<MethodCall> fakeAppSharing(
+      WidgetTester tester, {
+      bool split = false,
+      List<Map<String, Object?>> shareApps = const [],
+      int apkReceivers = 3,
+      int zipReceivers = 4,
+    }) {
+      final calls = <MethodCall>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         AppSharing.channel,
         (call) async {
-          calls.add(call.method);
+          calls.add(call);
           if (call.method == 'describe') {
             return <String, Object?>{
               'versionName': '10.1.2',
               'fileName': '膜法指南-10.1.2.apk',
               'sizeBytes': 147 * 1024 * 1024,
               'splitInstall': split,
+              'shareApps': shareApps,
+              'apkReceivers': apkReceivers,
+              'zipReceivers': zipReceivers,
             };
           }
           return null;
         },
       );
-      addTearDown(
-        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      // Toasts go through a platform channel that has no home in tests.
+      const toast = MethodChannel('PonnamKarthik/fluttertoast');
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        toast,
+        (call) async => true,
+      );
+      addTearDown(() {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
           AppSharing.channel,
           null,
-        ),
-      );
+        );
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          toast,
+          null,
+        );
+      });
       return calls;
     }
+
+    List<String> methods(List<MethodCall> calls) => [
+      for (final c in calls) c.method,
+    ];
 
     Future<void> openFromMenu(WidgetTester tester) async {
       await tester.pumpWidget(
@@ -227,42 +264,112 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets(
-      'explains what is sent, then hands the APK to the share sheet',
-      (tester) async {
-        final calls = fakeAppSharing(tester, split: false);
-        await openFromMenu(tester);
-        expect(find.textContaining('膜法指南-10.1.2.apk'), findsOneWidget);
-        expect(find.textContaining('147 MB'), findsOneWidget);
-        expect(find.textContaining('.apk.1'), findsNothing);
-        expect(find.textContaining('.1'), findsOneWidget);
-        expect(calls, ['describe']);
-
-        await tester.tap(find.text('分享'));
-        await tester.pumpAndSettle();
-        expect(calls, ['describe', 'share']);
-        expect(find.byType(AlertDialog), findsNothing);
-      },
-    );
-
-    testWidgets('cancelling shares nothing', (tester) async {
-      final calls = fakeAppSharing(tester, split: false);
+    testWidgets('offers the installed transfer apps first', (tester) async {
+      final calls = fakeAppSharing(tester, shareApps: [shareMe, zapya]);
       await openFromMenu(tester);
+      expect(find.text('用 ShareMe 发送'), findsOneWidget);
+      expect(find.text('打开 Zapya'), findsOneWidget);
+      expect(find.textContaining('找到膜法指南发送'), findsOneWidget);
+      expect(find.text('发送 APK'), findsNothing);
+
+      await tester.tap(find.text('用 ShareMe 发送'));
+      await tester.pumpAndSettle();
+      expect(methods(calls), ['describe', 'share']);
+      expect(calls.last.arguments, {
+        'format': 'apk',
+        'package': 'com.xiaomi.midrop',
+      });
+      expect(find.byType(AlertDialog), findsNothing);
+    });
+
+    testWidgets('an app that only takes ZIPs gets the ZIP', (tester) async {
+      const zipOnly = <String, Object?>{
+        'package': 'com.example.ziponly',
+        'label': 'ZipOnly',
+        'sendsApk': false,
+        'sendsZip': true,
+      };
+      final calls = fakeAppSharing(tester, shareApps: [zipOnly]);
+      await openFromMenu(tester);
+      await tester.tap(find.text('用 ZipOnly 发送 ZIP'));
+      await tester.pumpAndSettle();
+      expect(methods(calls), ['describe', 'share']);
+      expect(calls.last.arguments, {
+        'format': 'zip',
+        'package': 'com.example.ziponly',
+      });
+      await tester.pump(const Duration(seconds: 2)); // let the toast expire
+    });
+
+    testWidgets('an app that cannot take the file is opened instead', (
+      tester,
+    ) async {
+      final calls = fakeAppSharing(tester, shareApps: [zapya]);
+      await openFromMenu(tester);
+      await tester.tap(find.text('打开 Zapya'));
+      await tester.pumpAndSettle();
+      expect(methods(calls), ['describe', 'open']);
+      expect(calls.last.arguments, {'package': 'com.dewmobile.kuaiya.play'});
+    });
+
+    testWidgets('其他方式 leads to the plain file dialog', (tester) async {
+      final calls = fakeAppSharing(tester, shareApps: [shareMe]);
+      await openFromMenu(tester);
+      await tester.tap(find.text('其他方式'));
+      await tester.pumpAndSettle();
+      expect(find.text('发送 APK'), findsOneWidget);
+      expect(find.text('发送 ZIP'), findsOneWidget);
+      expect(find.textContaining('147 MB'), findsOneWidget);
+      expect(find.textContaining('没有装面对面传文件的应用'), findsNothing);
+
+      await tester.tap(find.text('发送 ZIP'));
+      await tester.pumpAndSettle();
+      expect(methods(calls), ['describe', 'share']);
+      expect(calls.last.arguments, {'format': 'zip', 'package': null});
+      await tester.pump(const Duration(seconds: 2)); // let the toast expire
+    });
+
+    testWidgets('without transfer apps the file dialog sends the APK', (
+      tester,
+    ) async {
+      final calls = fakeAppSharing(tester);
+      await openFromMenu(tester);
+      expect(find.textContaining('膜法指南-10.1.2.apk'), findsOneWidget);
+      expect(find.textContaining('没有装面对面传文件的应用'), findsOneWidget);
+      expect(find.text('用 ShareMe 发送'), findsNothing);
+
+      await tester.tap(find.text('发送 APK'));
+      await tester.pumpAndSettle();
+      expect(methods(calls), ['describe', 'share']);
+      expect(calls.last.arguments, {'format': 'apk', 'package': null});
+      expect(find.byType(AlertDialog), findsNothing);
+    });
+
+    testWidgets('a file type nobody can receive is not sent', (tester) async {
+      final calls = fakeAppSharing(tester, apkReceivers: 0, zipReceivers: 0);
+      await openFromMenu(tester);
+      await tester.tap(find.text('发送 APK'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('发送 ZIP'));
+      await tester.pumpAndSettle();
+      expect(methods(calls), ['describe']);
+      expect(find.byType(AlertDialog), findsOneWidget);
+
       await tester.tap(find.text('取消'));
       await tester.pumpAndSettle();
-      expect(calls, ['describe']);
       expect(find.byType(AlertDialog), findsNothing);
+      await tester.pump(const Duration(seconds: 2)); // let the toasts expire
     });
 
     testWidgets('a copy installed in pieces by Play gets the download page', (
       tester,
     ) async {
-      final calls = fakeAppSharing(tester, split: true);
+      final calls = fakeAppSharing(tester, split: true, shareApps: [shareMe]);
       await openFromMenu(tester);
       expect(find.text('暂时无法直接分享'), findsOneWidget);
       expect(find.text('打开下载页'), findsOneWidget);
-      expect(find.text('分享'), findsNothing);
-      expect(calls, ['describe']);
+      expect(find.text('用 ShareMe 发送'), findsNothing);
+      expect(methods(calls), ['describe']);
     });
   });
 
